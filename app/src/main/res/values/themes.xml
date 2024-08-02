@@ -1,0 +1,15 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.OrganicStore" parent="Theme.Material3.Light.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <item name="colorPrimary">@color/green</item>
+        <item name="bottomNavigationStyle">@style/CustomBottomNavigationStyle</item>
+    </style>
+
+    <style name="CustomBottomNavigationStyle" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="itemIconSize">24dp</item> <!-- Adjust the icon size -->
+        <item name="itemIconPadding">15dp</item> <!-- Adjust the padding around the icon -->
+        <item name="itemBackground">@drawable/bottom_nav_item_background</item> <!-- Custom background for items -->
+    </style>
+    <style name="Theme.OrganicStore" parent="Base.Theme.OrganicStore" />
+</resources>

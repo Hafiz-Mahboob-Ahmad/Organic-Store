@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/home_fragment">
+
+    <fragment
+        android:id="@+id/home_fragment"
+        android:name="com.sa.organicStore.fragments.HomeFragment"
+        android:label="Home"
+        tools:layout="@layout/fragment_home">
+
+        <action
+            android:id="@+id/action_homeFragment_to_productFragment"
+            app:destination="@id/product_fragment" />
+
+        <action
+            android:id="@+id/action_homeFragment_to_bundleDetailsFragment"
+            app:destination="@+id/bundle_details_fragment" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/bundle_details_fragment"
+        android:name="com.sa.organicStore.fragments.BundleDetailsFragment"
+        android:label="fragment_bundle_details_page"
+        tools:layout="@layout/fragment_bundle_details">
+        <argument
+            android:name="packItemData"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_bundleDetailsFragment_to_cartFragment"
+            app:destination="@+id/cart_fragment"
+            app:popUpTo="@id/home_fragment"
+            app:popUpToInclusive="false"/>
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/store_fragment"
+        android:name="com.sa.organicStore.fragments.StoreFragment"
+        android:label="Store"
+        tools:layout="@layout/fragment_store">
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/menu_fragment"
+        android:name="com.sa.organicStore.fragments.MenuFragment"
+        android:label="Menu"
+        tools:layout="@layout/fragment_menu">
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/profile_fragment"
+        android:name="com.sa.organicStore.fragments.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile">
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/save_fragment"
+        android:name="com.sa.organicStore.fragments.SaveFragment"
+        android:label="Save"
+        tools:layout="@layout/fragment_save" />
+
+
+    <fragment
+        android:id="@+id/product_fragment"
+        android:name="com.sa.organicStore.fragments.ProductFragment"
+        android:label="fragment_popular_pack_and_new_item"
+        tools:layout="@layout/fragment_product">
+        <argument
+            android:name="productItemData"
+            app:argType="string" />
+        <argument
+            android:name="title"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_productFragment_to_bundleDetailsFragment"
+            app:destination="@id/bundle_details_fragment" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/cart_fragment"
+        android:name="com.sa.organicStore.fragments.CartFragment"
+        android:label="fragment_cart"
+        tools:layout="@layout/fragment_cart">
+
+
+    </fragment>
+
+
+</navigation>

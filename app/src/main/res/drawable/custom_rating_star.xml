@@ -1,0 +1,8 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/active_stars"
+        android:drawable="@drawable/ic_rating_star" />
+
+    <!--    <item android:id="@+id/empty_star_background"-->
+    <!--        android:drawable="@drawable/custom_star_empty" />-->
+</layer-list>
