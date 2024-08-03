@@ -19,15 +19,15 @@ class SplashScreenActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
 
-        if (isUserLoggedIn() == null) {
-            CoroutineScope(Dispatchers.IO).launch {
-                delay(2000)
+        CoroutineScope(Dispatchers.Main).launch {
+            if (isUserLoggedIn() == null) {
+                delay(1000)
                 startActivity(Intent(this@SplashScreenActivity, WelcomeActivity::class.java))
+            } else {
+                startActivity(Intent(this@SplashScreenActivity, HomeActivity::class.java))
             }
-        } else {
-            startActivity(Intent(this@SplashScreenActivity, HomeActivity::class.java))
+            finish()
         }
-        finish()
     }
 
     private fun isUserLoggedIn(): UserEntity? {

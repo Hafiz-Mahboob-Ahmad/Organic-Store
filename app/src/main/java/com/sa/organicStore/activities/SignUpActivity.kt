@@ -57,7 +57,7 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun isValidPassword(password: String?): Boolean {
-        val passwordPattern = "^(?=.[0-9])(?=.[A-Z])(?=.*[@#$%^&+=]).{8,}$"
+        val passwordPattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[*@#$%^&+=]).{8,}$"
         return password != null && password.matches(passwordPattern.toRegex())
     }
 
@@ -71,7 +71,7 @@ class SignUpActivity : AppCompatActivity() {
                 navigateToHomeActivity()
             } else {
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(this@SignUpActivity, "User already exists", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@SignUpActivity, "User already exists with this email.", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -85,7 +85,6 @@ class SignUpActivity : AppCompatActivity() {
             apply()
         }
     }
-
 
     private fun navigateToHomeActivity() {
         startActivity(Intent(this, HomeActivity::class.java))
