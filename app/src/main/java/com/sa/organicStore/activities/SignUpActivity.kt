@@ -82,6 +82,7 @@ class SignUpActivity : AppCompatActivity() {
         val json: String = Gson().toJson(newUser)
         with(sharedPref.edit()) {
             putString("user", json)
+            putString("user_email", newUser.email)
             apply()
         }
     }

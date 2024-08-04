@@ -47,4 +47,10 @@ class ProductViewModel(application: Application) : AndroidViewModel(application)
             _newProducts.value = newProductsList
         }
     }
+
+    fun insertProduct(product: ProductEntity) {
+        viewModelScope.launch(Dispatchers.IO) {
+            appDatabase.getProductDao().insertProduct(listOf(product))
+        }
+    }
 }

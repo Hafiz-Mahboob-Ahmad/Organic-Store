@@ -22,5 +22,6 @@ data class ProductEntity(
     val weight: Int,
     val weightUnit: String = "Kg",
     var quantityCounter: Int = 0,
-    var category: String = ""
+    var category: String = "",
+    var userEmail: String? = null
 ) : Parcelable

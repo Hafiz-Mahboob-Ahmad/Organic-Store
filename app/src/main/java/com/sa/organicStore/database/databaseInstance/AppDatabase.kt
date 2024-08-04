@@ -11,7 +11,7 @@ import com.sa.organicStore.database.dao.UserDAO
 import com.sa.organicStore.database.entities.ProductEntity
 import com.sa.organicStore.database.entities.UserEntity
 
-@Database(entities = [UserEntity::class, ProductEntity::class], version = 1, exportSchema = false)
+@Database(entities = [UserEntity::class, ProductEntity::class], version = 2, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 

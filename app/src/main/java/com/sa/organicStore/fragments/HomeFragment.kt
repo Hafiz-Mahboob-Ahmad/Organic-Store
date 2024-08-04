@@ -1,5 +1,6 @@
 package com.sa.organicStore.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.gson.Gson
 import com.sa.organicStore.adapter.HomeAdapter
+import com.sa.organicStore.database.databaseInstance.AppDatabase
 import com.sa.organicStore.database.entities.ProductEntity
 import com.sa.organicStore.databinding.FragmentHomeBinding
 import com.sa.organicStore.viewmodel.ProductViewModel
@@ -88,11 +90,19 @@ class HomeFragment : Fragment(), HomeAdapter.OnItemClickListener {
     }
 
     override fun onSaveButtonClick(position: Int, adapter: HomeAdapter) {
-        // ye wala product mera data base me store hona chahiye or time any py me apna save kiye gye products nikalonga database sy
+        val product = adapter.getItemAtPosition(position)
+        val userEmail = getUserEmail()
+        product.userEmail = userEmail
+        productViewModel.insertProduct(product)
     }
 
     override fun onImageClick(position: Int, adapter: HomeAdapter) {
         val product = adapter.getItemAtPosition(position)
         navigateToBundleDetailsFragment(product)
+    }
+
+    private fun getUserEmail(): String {
+        val sharedPreferences = requireContext().getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        return sharedPreferences.getString("user_email", "") ?: ""
     }
 }
