@@ -1,8 +1,9 @@
-package com.sa.organicStore.database.loginSignup
+package com.sa.organicStore.database.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import com.sa.organicStore.database.entities.UserEntity
 
 @Dao
 interface UserDAO {
@@ -14,7 +15,7 @@ interface UserDAO {
     suspend fun getUserByEmailAndPassword(email: String, password: String): UserEntity?
 
     @Query("SELECT * FROM user WHERE email= :email")
-    suspend fun getUserProfile(email: String) : UserEntity
+    suspend fun getUserProfile(email: String): UserEntity
 
     @Query("SELECT * FROM user WHERE email = :email")
     suspend fun getUserByEmail(email: String): UserEntity?

@@ -6,9 +6,9 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.google.gson.Gson
-import com.sa.organicStore.database.loginSignup.UserDAO
-import com.sa.organicStore.database.loginSignup.UserDatabase
-import com.sa.organicStore.database.loginSignup.UserEntity
+import com.sa.organicStore.database.dao.UserDAO
+import com.sa.organicStore.database.databaseInstance.AppDatabase
+import com.sa.organicStore.database.entities.UserEntity
 import com.sa.organicStore.databinding.ActivitySignUpBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,7 +24,7 @@ class SignUpActivity : AppCompatActivity() {
         binding = ActivitySignUpBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val userDatabase = UserDatabase.invoke(applicationContext)
+        val userDatabase = AppDatabase.invoke(applicationContext)
         userDao = userDatabase.getUserDAO()
 
         setClickListeners()

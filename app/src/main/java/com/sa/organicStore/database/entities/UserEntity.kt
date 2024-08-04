@@ -1,4 +1,4 @@
-package com.sa.organicStore.database.loginSignup
+package com.sa.organicStore.database.entities
 
 import android.os.Parcelable
 import androidx.room.Entity

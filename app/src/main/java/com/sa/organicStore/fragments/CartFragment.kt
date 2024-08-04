@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sa.organicStore.adapter.CartAdapter
 import com.sa.organicStore.constant.Constant
+import com.sa.organicStore.database.entities.ProductEntity
 import com.sa.organicStore.databinding.FragmentCartBinding
 import com.sa.organicStore.model.ProductModel
 
@@ -16,7 +17,7 @@ class CartFragment : Fragment() {
 
     private lateinit var binding: FragmentCartBinding
     private lateinit var cardAdapter: CartAdapter
-    private val productList: ArrayList<ProductModel> = Constant.getCardData()
+    private val productList: ArrayList<ProductEntity> = Constant.getCardData()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

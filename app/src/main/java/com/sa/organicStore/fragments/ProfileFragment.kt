@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.gson.Gson
-import com.sa.organicStore.database.loginSignup.UserEntity
+import com.sa.organicStore.database.entities.UserEntity
 import com.sa.organicStore.databinding.FragmentProfileBinding
 
 class ProfileFragment : Fragment() {

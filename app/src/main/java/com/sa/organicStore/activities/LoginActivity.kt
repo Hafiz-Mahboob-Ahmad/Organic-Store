@@ -7,9 +7,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.google.gson.Gson
-import com.sa.organicStore.database.loginSignup.UserDAO
-import com.sa.organicStore.database.loginSignup.UserDatabase
-import com.sa.organicStore.database.loginSignup.UserEntity
+import com.sa.organicStore.database.databaseInstance.AppDatabase
+import com.sa.organicStore.database.dao.UserDAO
+import com.sa.organicStore.database.entities.UserEntity
 import com.sa.organicStore.databinding.ActivityLoginBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -19,15 +19,15 @@ class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
     private lateinit var userDao: UserDAO
-    lateinit var sharedPre: SharedPreferences
+    private lateinit var sharedPref: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val userDatabase = UserDatabase.invoke(applicationContext)
-        userDao = userDatabase.getUserDAO()
+        val database = AppDatabase.invoke(applicationContext)
+        userDao = database.getUserDAO()
 
         setupClickListeners()
     }
@@ -73,7 +73,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun saveLoginState(user: UserEntity) {
-        val sharedPref = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        sharedPref = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val json: String = Gson().toJson(user)
         with(sharedPref.edit()) {
             putString("user", json)

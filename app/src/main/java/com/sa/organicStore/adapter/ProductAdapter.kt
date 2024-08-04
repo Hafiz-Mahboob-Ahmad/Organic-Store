@@ -3,16 +3,17 @@ package com.sa.organicStore.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.sa.organicStore.database.entities.ProductEntity
 import com.sa.organicStore.databinding.RvVerticalBinding
 import com.sa.organicStore.model.ProductModel
 
 class ProductAdapter(
-    private val dataList: ArrayList<ProductModel>,
+    private val dataList: ArrayList<ProductEntity>,
     private val ourNewItemClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<ProductAdapter.MyViewHolder>() {
 
     interface OnItemClickListener {
-        fun onItemClick(pack: ProductModel)
+        fun onItemClick(pack: ProductEntity)
     }
 
     inner class MyViewHolder(private val binding: RvVerticalBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -22,7 +23,7 @@ class ProductAdapter(
             }
         }
 
-        fun bind(pack: ProductModel) {
+        fun bind(pack: ProductEntity) {
             binding.ivBundlePack.setImageResource(pack.image[0])
             binding.tvBundlePack.text = pack.name
             binding.tvPackIngredients.text = pack.ingredients

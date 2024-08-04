@@ -10,12 +10,14 @@ import androidx.navigation.fragment.navArgs
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.sa.organicStore.adapter.ProductAdapter
+import com.sa.organicStore.database.entities.ProductEntity
 import com.sa.organicStore.databinding.FragmentProductBinding
 import com.sa.organicStore.model.ProductModel
 
 class ProductFragment : Fragment(), ProductAdapter.OnItemClickListener {
 
     private lateinit var binding: FragmentProductBinding
+    private lateinit var productAdapter: ProductAdapter
     private val args: ProductFragmentArgs by navArgs()
 
     override fun onCreateView(
@@ -29,11 +31,11 @@ class ProductFragment : Fragment(), ProductAdapter.OnItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val listType = object : TypeToken<ArrayList<ProductModel>>() {}.type
-        val productModelList: ArrayList<ProductModel> = Gson().fromJson(args.productItemData, listType)
+        val listType = object : TypeToken<ArrayList<ProductEntity>>() {}.type
+        val productList: ArrayList<ProductEntity> = Gson().fromJson(args.productItemData, listType)
 
         setTitle()
-        setupRecyclerView(productModelList)
+        setupRecyclerView(productList)
         setupClickListeners()
     }
 
@@ -41,8 +43,9 @@ class ProductFragment : Fragment(), ProductAdapter.OnItemClickListener {
         binding.tvTitle.text = args.title
     }
 
-    private fun setupRecyclerView(productModelList: ArrayList<ProductModel>) {
-        binding.rvProductData.adapter = ProductAdapter(productModelList, this)
+    private fun setupRecyclerView(productList: ArrayList<ProductEntity>) {
+        productAdapter = ProductAdapter(productList, this)
+        binding.rvProductData.adapter = productAdapter
     }
 
     private fun setupClickListeners() {
@@ -55,11 +58,11 @@ class ProductFragment : Fragment(), ProductAdapter.OnItemClickListener {
         requireActivity().onBackPressedDispatcher.onBackPressed()
     }
 
-    override fun onItemClick(pack: ProductModel) {
+    override fun onItemClick(pack: ProductEntity) {
         navigateToBundleDetailsFragment(pack)
     }
 
-    private fun navigateToBundleDetailsFragment(pack: ProductModel) {
+    private fun navigateToBundleDetailsFragment(pack: ProductEntity) {
         val json: String = Gson().toJson(pack)
         val action = ProductFragmentDirections.actionProductFragmentToBundleDetailsFragment(packItemData = json)
         findNavController().navigate(action)

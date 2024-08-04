@@ -3,11 +3,12 @@ package com.sa.organicStore.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.sa.organicStore.database.entities.ProductEntity
 import com.sa.organicStore.databinding.RvCartPageBinding
 import com.sa.organicStore.model.ProductModel
 
 class CartAdapter(
-    private val dataList: ArrayList<ProductModel>,
+    private val dataList: ArrayList<ProductEntity>,
     private val cartClickListener: CartListener
 ) : RecyclerView.Adapter<CartAdapter.MyViewHolder>() {
 
@@ -30,7 +31,7 @@ class CartAdapter(
             }
         }
 
-        fun bind(pack: ProductModel) {
+        fun bind(pack: ProductEntity) {
             binding.ivProduct.setImageResource(pack.image[0])
             binding.tvProductName.text = pack.name
             binding.tvWeight.text = pack.weight.toString()
