@@ -51,4 +51,10 @@ class HomeAdapter(
     fun getItemAtPosition(position: Int): ProductEntity {
         return dataList[position]
     }
+
+    fun updateData(newList: ArrayList<ProductEntity>) {
+        dataList.clear()
+        dataList.addAll(newList)
+        notifyDataSetChanged()
+    }
 }

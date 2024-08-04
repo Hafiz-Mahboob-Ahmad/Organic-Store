@@ -8,9 +8,12 @@ import com.sa.organicStore.constant.Constant
 import com.sa.organicStore.database.databaseInstance.AppDatabase
 import com.sa.organicStore.database.entities.ProductEntity
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 class ProductViewModel(application: Application) : AndroidViewModel(application) {
@@ -53,4 +56,9 @@ class ProductViewModel(application: Application) : AndroidViewModel(application)
             appDatabase.getProductDao().insertProduct(listOf(product))
         }
     }
+
+    fun getProductsByUserEmail(email: String): Flow<List<ProductEntity>> = flow {
+        val products = appDatabase.getProductDao().getProductsByUserEmail(email)
+        emit(products)
+    }.flowOn(Dispatchers.IO)
 }
