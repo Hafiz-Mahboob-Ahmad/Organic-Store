@@ -5,7 +5,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.sa.organicStore.database.entities.ProductEntity
 import com.sa.organicStore.databinding.RvHorizontalBinding
-import com.sa.organicStore.model.ProductModel
 
 class HomeAdapter(
     private val dataList: ArrayList<ProductEntity>,
@@ -13,13 +12,17 @@ class HomeAdapter(
 ) : RecyclerView.Adapter<HomeAdapter.MyViewHolder>() {
 
     interface OnItemClickListener {
-        fun onItemClick(pack: ProductEntity)
+        fun onSaveButtonClick(position: Int, adapter: HomeAdapter)
+        fun onImageClick(position: Int, adapter: HomeAdapter)
     }
 
     inner class MyViewHolder(private val binding: RvHorizontalBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
-            binding.root.setOnClickListener {
-                itemClickListener.onItemClick(dataList[adapterPosition])
+            binding.ivAdd.setOnClickListener {
+                itemClickListener.onSaveButtonClick(adapterPosition, this@HomeAdapter)
+            }
+            binding.ivBundlePack.setOnClickListener {
+                itemClickListener.onImageClick(adapterPosition, this@HomeAdapter)
             }
         }
 
@@ -43,5 +46,9 @@ class HomeAdapter(
 
     override fun getItemCount(): Int {
         return dataList.size
+    }
+
+    fun getItemAtPosition(position: Int): ProductEntity {
+        return dataList[position]
     }
 }

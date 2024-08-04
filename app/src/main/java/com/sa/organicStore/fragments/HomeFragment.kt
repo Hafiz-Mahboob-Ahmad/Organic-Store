@@ -81,13 +81,18 @@ class HomeFragment : Fragment(), HomeAdapter.OnItemClickListener {
         }
     }
 
-    override fun onItemClick(pack: ProductEntity) {
-        navigateToBundleDetailsFragment(pack)
-    }
-
     private fun navigateToBundleDetailsFragment(pack: ProductEntity) {
         val json: String = Gson().toJson(pack)
         val action = HomeFragmentDirections.actionHomeFragmentToBundleDetailsFragment(packItemData = json)
         findNavController().navigate(action)
+    }
+
+    override fun onSaveButtonClick(position: Int, adapter: HomeAdapter) {
+        // ye wala product mera data base me store hona chahiye or time any py me apna save kiye gye products nikalonga database sy
+    }
+
+    override fun onImageClick(position: Int, adapter: HomeAdapter) {
+        val product = adapter.getItemAtPosition(position)
+        navigateToBundleDetailsFragment(product)
     }
 }
