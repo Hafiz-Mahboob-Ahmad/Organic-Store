@@ -32,7 +32,7 @@ class SignUpActivity : AppCompatActivity() {
 
     private fun setClickListeners() {
         binding.ivSubmit.setOnClickListener {
-            val name = binding.tvName.text.toString()
+            val name = binding.etName.text.toString()
             val email = binding.etEmail.text.toString()
             val password = binding.etPassword.text.toString()
 

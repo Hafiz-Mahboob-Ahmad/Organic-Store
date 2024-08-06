@@ -12,17 +12,17 @@ class HomeAdapter(
 ) : RecyclerView.Adapter<HomeAdapter.MyViewHolder>() {
 
     interface OnItemClickListener {
-        fun onSaveButtonClick(position: Int, adapter: HomeAdapter)
-        fun onImageClick(position: Int, adapter: HomeAdapter)
+        fun onSaveButtonClick(position: Int)
+        fun onImageClick(position: Int)
     }
 
     inner class MyViewHolder(private val binding: RvHorizontalBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
             binding.ivAdd.setOnClickListener {
-                itemClickListener.onSaveButtonClick(adapterPosition, this@HomeAdapter)
+                itemClickListener.onSaveButtonClick(adapterPosition)
             }
             binding.ivBundlePack.setOnClickListener {
-                itemClickListener.onImageClick(adapterPosition, this@HomeAdapter)
+                itemClickListener.onImageClick(adapterPosition)
             }
         }
 
@@ -52,9 +52,4 @@ class HomeAdapter(
         return dataList[position]
     }
 
-    fun updateData(newList: ArrayList<ProductEntity>) {
-        dataList.clear()
-        dataList.addAll(newList)
-        notifyDataSetChanged()
-    }
 }

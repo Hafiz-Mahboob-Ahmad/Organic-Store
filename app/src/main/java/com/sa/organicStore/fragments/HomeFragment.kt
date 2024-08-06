@@ -7,22 +7,27 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.gson.Gson
 import com.sa.organicStore.adapter.HomeAdapter
 import com.sa.organicStore.database.databaseInstance.AppDatabase
 import com.sa.organicStore.database.entities.ProductEntity
+import com.sa.organicStore.database.entities.SaveProductModel
+import com.sa.organicStore.database.entities.UserEntity
 import com.sa.organicStore.databinding.FragmentHomeBinding
 import com.sa.organicStore.viewmodel.ProductViewModel
+import com.sa.organicStore.viewmodel.SaveViewModel
 import kotlinx.coroutines.launch
 
-class HomeFragment : Fragment(), HomeAdapter.OnItemClickListener {
+class HomeFragment : Fragment() {
 
     private lateinit var binding: FragmentHomeBinding
     private lateinit var popularPackAdapter: HomeAdapter
     private lateinit var newItemAdapter: HomeAdapter
     private val productViewModel: ProductViewModel by viewModels()
+    private val saveViewModel: SaveViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,34 +41,58 @@ class HomeFragment : Fragment(), HomeAdapter.OnItemClickListener {
         super.onViewCreated(view, savedInstanceState)
 
         collectStateFlows()
-        setupClickListeners()
+        setClickListeners()
     }
 
     private fun collectStateFlows() {
         lifecycleScope.launch {
             productViewModel.popularProducts.collect { productList ->
-                setupPopularPackRecyclerView(productList)
+                setPopularPackRecyclerView(productList)
             }
         }
 
         lifecycleScope.launch {
             productViewModel.newProducts.collect { productList ->
-                setupOurNewItemRecyclerView(productList)
+                setOurNewItemRecyclerView(productList)
             }
         }
     }
 
-    private fun setupPopularPackRecyclerView(productList: List<ProductEntity>) {
-        popularPackAdapter = HomeAdapter(ArrayList(productList), this)
+    private fun setPopularPackRecyclerView(productList: List<ProductEntity>) {
+        popularPackAdapter = HomeAdapter(ArrayList(productList), object : HomeAdapter.OnItemClickListener {
+            override fun onSaveButtonClick(position: Int) {
+                val userId = getUserId()
+                val productId = productList[position].id
+                val saveProduct = SaveProductModel(userId = userId, productId = productId)
+                saveViewModel.insertSaveProducts(saveProduct)
+            }
+
+            override fun onImageClick(position: Int) {
+                val product = productList[position]
+                navigateToBundleDetailsFragment(product)
+            }
+        })
         binding.rvPopularPack.adapter = popularPackAdapter
     }
 
-    private fun setupOurNewItemRecyclerView(productList: List<ProductEntity>) {
-        newItemAdapter = HomeAdapter(ArrayList(productList), this)
+    private fun setOurNewItemRecyclerView(productList: List<ProductEntity>) {
+        newItemAdapter = HomeAdapter(ArrayList(productList), object : HomeAdapter.OnItemClickListener {
+            override fun onSaveButtonClick(position: Int) {
+                val userId = getUserId()
+                val productId = productList[position].id
+                val saveProduct = SaveProductModel(userId = userId, productId = productId)
+                saveViewModel.insertSaveProducts(saveProduct)
+            }
+
+            override fun onImageClick(position: Int) {
+                val product = productList[position]
+                navigateToBundleDetailsFragment(product)
+            }
+        })
         binding.rvOurNewItem.adapter = newItemAdapter
     }
 
-    private fun setupClickListeners() {
+    private fun setClickListeners() {
         binding.tvViewAllPopularPack.setOnClickListener {
             val productList = productViewModel.popularProducts.value
             navigateToProductFragment(ArrayList(productList), "Popular Pack")
@@ -89,20 +118,11 @@ class HomeFragment : Fragment(), HomeAdapter.OnItemClickListener {
         findNavController().navigate(action)
     }
 
-    override fun onSaveButtonClick(position: Int, adapter: HomeAdapter) {
-        val product = adapter.getItemAtPosition(position)
-        val userEmail = getUserEmail()
-        product.userEmail = userEmail
-        productViewModel.insertProduct(product)
-    }
 
-    override fun onImageClick(position: Int, adapter: HomeAdapter) {
-        val product = adapter.getItemAtPosition(position)
-        navigateToBundleDetailsFragment(product)
-    }
-
-    private fun getUserEmail(): String {
+    private fun getUserId(): Long {
         val sharedPreferences = requireContext().getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-        return sharedPreferences.getString("user_email", "") ?: ""
+        val userJson = sharedPreferences.getString("user", "") ?: ""
+        val user = Gson().fromJson(userJson, UserEntity::class.java)
+        return user.id
     }
 }

@@ -104,124 +104,95 @@ object Constant {
         return arrayListOf(
             ProductEntity(
                 image = arrayListOf(
-                    R.drawable.tamarind_rice_powder,
-                    R.drawable.rice_flour,
-                    R.drawable.tamarind_rice_powder
+                    R.drawable.dil_seeeds,
+                    R.drawable.dil_seeeds,
+                    R.drawable.dil_seeeds
                 ),
-                name = "Tamarind Rice Pack",
+                name = "Dil Seeds Pack",
                 ingredients = "Rice, Tamarind, Spices",
-                offerPrice = 35,
-                actualPrice = 50,
+                offerPrice = 7,
+                actualPrice = 8,
                 description = "Tamarind rice powder product details description",
-                weight = 8,
-                weightUnit = "Gm",
-                quantityCounter = 20
+                weight = 8
             ),
             ProductEntity(
                 image = arrayListOf(
-                    R.drawable.rice_flour,
-                    R.drawable.rice_flour,
-                    R.drawable.tamarind_rice_powder
+                    R.drawable.sunflower_seeds,
+                    R.drawable.sunflower_seeds,
+                    R.drawable.sunflower_seeds
                 ),
-                name = "Spices Bundle",
-                ingredients = "Turmeric, Pepper, Cumin",
-                offerPrice = 45,
-                actualPrice = 60,
-                description = "Tamarind rice powder product details description",
-                weight = 6,
-                weightUnit = "Kg",
-                quantityCounter = 1
+                name = "Sunflower Seeds",
+                ingredients = "Pepper, Cumin",
+                offerPrice = 5,
+                actualPrice = 6,
+                description = "Sunflower Seeds powder product details description",
+                weight = 2
             ),
             ProductEntity(
                 image = arrayListOf(
                     R.drawable.tamarind_rice_powder,
-                    R.drawable.rice_flour,
+                    R.drawable.tamarind_rice_powder,
                     R.drawable.tamarind_rice_powder
                 ),
-                name = "Herbal Tea Pack",
+                name = "Tamarind Rice Powder Pack",
                 ingredients = "Green Tea, Mint, Lemon",
-                offerPrice = 50,
-                actualPrice = 65,
+                offerPrice = 7,
+                actualPrice = 8,
                 description = "Tamarind rice powder product details description",
-                weight = 8,
-                weightUnit = "Gm",
-                quantityCounter = 20
+                weight = 1
             ),
             ProductEntity(
                 image = arrayListOf(
-                    R.drawable.turmeric_powder,
                     R.drawable.rice_flour,
-                    R.drawable.tamarind_rice_powder
+                    R.drawable.rice_flour,
+                    R.drawable.rice_flour
                 ),
-                name = "Soup Mix Pack",
+                name = "Rice Flour Pack",
                 ingredients = "Vegetables, Spices, Herbs",
-                offerPrice = 30,
-                actualPrice = 45,
-                description = "Turmeric powder product details description",
-                weight = 8,
-                weightUnit = "Kg",
-                quantityCounter = 4
+                offerPrice = 15,
+                actualPrice = 18,
+                description = "Rice flour powder contains sdvvvsvvv sv",
+                weight = 5,
             ),
             ProductEntity(
                 image = arrayListOf(
-                    R.drawable.rice_flour,
-                    R.drawable.rice_flour,
-                    R.drawable.tamarind_rice_powder
+                    R.drawable.yellow_mastered_seeds,
+                    R.drawable.yellow_mastered_seeds,
+                    R.drawable.yellow_mastered_seeds
                 ),
-                name = "Onion Oil Pack",
-                ingredients = "Onion, Oil, Spices",
-                offerPrice = 40,
-                actualPrice = 55,
-                description = "Tamarind rice powder product details description",
-                weight = 8,
-                weightUnit = "Gm",
-                quantityCounter = 20
+                name = "Yellow Mastered Seeds",
+                ingredients = "Salt, Turmeric, Paprika,",
+                offerPrice = 4,
+                actualPrice = 5,
+                description = "Mustard seeds grow on small shrubs and come in varying colours, including yellow (confusingly also known as white), brown and black.",
+                weight = 1
             ),
             ProductEntity(
                 image = arrayListOf(
-                    R.drawable.rice_flour,
-                    R.drawable.rice_flour,
-                    R.drawable.tamarind_rice_powder
+                    R.drawable.dried_carrots,
+                    R.drawable.dried_carrots,
+                    R.drawable.dried_carrots
                 ),
-                name = "Tamarind Rice Pack",
-                ingredients = "Rice, Tamarind, Spices",
-                offerPrice = 35,
-                actualPrice = 50,
-                description = "Tamarind rice powder product details description",
-                weight = 8,
-                weightUnit = "Gm",
-                quantityCounter = 20
+                name = "Dried carrot",
+                ingredients = " water and carbs.",
+                offerPrice = 3,
+                actualPrice = 4,
+                description = "Dried carrot in slices or cubes. Ready to use and very handy to have at home. 100% natural. Perfect for salads, soups, stews and more!",
+                weight = 2
             ),
             ProductEntity(
                 image = arrayListOf(
-                    R.drawable.rice_flour,
-                    R.drawable.rice_flour,
-                    R.drawable.tamarind_rice_powder
+                    R.drawable.cloves,
+                    R.drawable.cloves,
+                    R.drawable.cloves
                 ),
-                name = "Spices Bundle",
-                ingredients = "Turmeric, Pepper, Cumin",
-                offerPrice = 45,
-                actualPrice = 60,
-                description = "Tamarind rice powder product details description",
-                weight = 6,
-                weightUnit = "Kg",
-                quantityCounter = 0
+                name = "Blend Cloves",
+                ingredients = "Eugenyl acetate, tanene, thymol",
+                offerPrice = 4,
+                actualPrice = 5,
+                description = "TOur clove trees are 35 year old native breed with 100 years life span. Cloves are grown organically, hygienically slow sun dried under shade to retain",
+                weight = 2,
             ),
-            ProductEntity(
-                image = arrayListOf(
-                    R.drawable.turmeric_powder,
-                    R.drawable.rice_flour,
-                    R.drawable.tamarind_rice_powder
-                ),
-                name = "Herbal Tea Pack",
-                ingredients = "Green Tea, Mint, Lemon",
-                offerPrice = 50,
-                actualPrice = 65,
-                description = "Tamarind rice powder product details description",
-                weight = 8,
-                weightUnit = "Kg",
-                quantityCounter = 0
-            )
         )
     }
 

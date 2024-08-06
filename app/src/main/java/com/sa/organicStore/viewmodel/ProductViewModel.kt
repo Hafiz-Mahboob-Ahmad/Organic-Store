@@ -7,18 +7,18 @@ import com.sa.organicStore.constant.AppConstants
 import com.sa.organicStore.constant.Constant
 import com.sa.organicStore.database.databaseInstance.AppDatabase
 import com.sa.organicStore.database.entities.ProductEntity
+import com.sa.organicStore.database.entities.SaveProductModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 class ProductViewModel(application: Application) : AndroidViewModel(application) {
     private val _popularProducts = MutableStateFlow<List<ProductEntity>>(emptyList())
     val popularProducts: StateFlow<List<ProductEntity>> get() = _popularProducts.asStateFlow()
+
 
     private val _newProducts = MutableStateFlow<List<ProductEntity>>(emptyList())
     val newProducts: StateFlow<List<ProductEntity>> get() = _newProducts.asStateFlow()
@@ -27,12 +27,12 @@ class ProductViewModel(application: Application) : AndroidViewModel(application)
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            insertProductData()
-            fetchProducts()
+            insertInitialProducts()
+            fetchInitialProducts()
         }
     }
 
-    private suspend fun insertProductData() {
+    private suspend fun insertInitialProducts() {
         val existingProducts = appDatabase.getProductDao().getAllProducts()
         if (existingProducts.isNullOrEmpty()) {
             val popularPackList = Constant.getPopularPackData().onEach { it.category = AppConstants.POPULAR_PRODUCTS }
@@ -42,7 +42,7 @@ class ProductViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    private fun fetchProducts() {
+    private fun fetchInitialProducts() {
         viewModelScope.launch(Dispatchers.IO) {
             val popularProductsList = appDatabase.getProductDao().getAllProducts(AppConstants.POPULAR_PRODUCTS)
             val newProductsList = appDatabase.getProductDao().getAllProducts(AppConstants.NEW_ITEM)
@@ -50,15 +50,4 @@ class ProductViewModel(application: Application) : AndroidViewModel(application)
             _newProducts.value = newProductsList
         }
     }
-
-    fun insertProduct(product: ProductEntity) {
-        viewModelScope.launch(Dispatchers.IO) {
-            appDatabase.getProductDao().insertProduct(listOf(product))
-        }
-    }
-
-    fun getProductsByUserEmail(email: String): Flow<List<ProductEntity>> = flow {
-        val products = appDatabase.getProductDao().getProductsByUserEmail(email)
-        emit(products)
-    }.flowOn(Dispatchers.IO)
 }
