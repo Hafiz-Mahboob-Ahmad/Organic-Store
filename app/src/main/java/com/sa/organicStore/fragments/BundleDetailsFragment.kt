@@ -17,28 +17,34 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.gson.Gson
 import com.sa.organicStore.R
 import com.sa.organicStore.adapter.ProductImagesAdapter
+import com.sa.organicStore.database.databaseInstance.AppDatabase
 import com.sa.organicStore.database.entities.CartModel
 import com.sa.organicStore.database.entities.ProductEntity
 import com.sa.organicStore.databinding.FragmentBundleDetailsBinding
 import com.sa.organicStore.utils.UserPrefs
 import com.sa.organicStore.viewmodel.CartViewModel
+import com.sa.organicStore.viewmodel.ProductViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.properties.Delegates
 
 class BundleDetailsFragment : Fragment() {
 
     private lateinit var binding: FragmentBundleDetailsBinding
-    private lateinit var product: ProductEntity
+    private var productId by Delegates.notNull<Int>()
     private val args: BundleDetailsFragmentArgs by navArgs()
+    private val productViewModel: ProductViewModel by viewModels()
     private val cartViewModel: CartViewModel by viewModels()
-    private var quantity: Int = 1
+    private var userId by Delegates.notNull<Int>()
+    private var quantity: Int = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentBundleDetailsBinding.inflate(inflater, container, false)
+        userId = UserPrefs(requireContext()).getUser()!!.userId
         return binding.root
     }
 
@@ -50,8 +56,18 @@ class BundleDetailsFragment : Fragment() {
     }
 
     private fun setupArguments() {
-        product = Gson().fromJson(args.packItemData, ProductEntity::class.java)
-        bindPackViews(product)
+        productId = args.productId
+        lifecycleScope.launch(Dispatchers.IO) {
+            val product: ProductEntity? = productViewModel.getProduct(productId, userId)
+            withContext(Dispatchers.Main) {
+                if (product != null) {
+                    bindPackViews(product)
+                } else {
+                    Log.e("Bundle", "Product not found for productId: $productId and userId: $userId")
+                    Toast.makeText(requireContext(), "Product not found", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     private fun setupClickListeners() {
@@ -73,14 +89,12 @@ class BundleDetailsFragment : Fragment() {
     }
 
     private fun insertProductIntoCart() {
-        val productId = product.productId
-        Log.d("Bundle", "fun insertProductIntoCart : productId = $productId")
+        val productId = productId
         val userId = UserPrefs(requireContext()).getUser()!!.userId
-        Log.d("Bundle", "fun insertProductIntoCart : userId = $userId")
 
         lifecycleScope.launch(Dispatchers.IO) {
             val isCartProductExists: CartModel? =
-                cartViewModel.getCartProduct(userId = userId, productId = productId)
+                cartViewModel.isCartProductExists(userId = userId, productId = productId)
             if (isCartProductExists == null) {
                 val cartModel = CartModel(
                     userId = userId,
@@ -94,11 +108,10 @@ class BundleDetailsFragment : Fragment() {
             } else {
                 cartViewModel.updateCartProduct(quantity, userId, productId)
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(requireContext(), "Quantity Updated to $quantity.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Updated", Toast.LENGTH_SHORT).show()
                 }
             }
         }
-
 
     }
 

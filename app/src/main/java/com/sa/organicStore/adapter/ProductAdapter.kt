@@ -9,17 +9,21 @@ import com.sa.organicStore.model.ProductModel
 
 class ProductAdapter(
     private val dataList: ArrayList<ProductEntity>,
-    private val ourNewItemClickListener: OnItemClickListener
+    private val itemClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<ProductAdapter.MyViewHolder>() {
 
     interface OnItemClickListener {
-        fun onItemClick(pack: ProductEntity)
+        fun onSaveButtonClick(position: Int)
+        fun onImageClick(position: Int)
     }
 
     inner class MyViewHolder(private val binding: RvVerticalBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
-            binding.root.setOnClickListener {
-                ourNewItemClickListener.onItemClick(dataList[adapterPosition])
+            binding.ivAdd.setOnClickListener {
+                itemClickListener.onSaveButtonClick(adapterPosition)
+            }
+            binding.ivBundlePack.setOnClickListener {
+                itemClickListener.onImageClick(adapterPosition)
             }
         }
 
@@ -29,6 +33,7 @@ class ProductAdapter(
             binding.tvPackIngredients.text = pack.ingredients
             binding.tvPackOfferPrice.text = "$" + pack.offerPrice.toString()
             binding.tvPackRegularPrice.text = "$" + pack.actualPrice.toString()
+            binding.tvQuantity.text = pack.quantityCounter.toString()
         }
     }
 

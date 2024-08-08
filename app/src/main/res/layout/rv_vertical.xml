@@ -75,4 +75,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tv_pack_offer_price" />
 
+    <TextView
+    android:id="@+id/tv_quantity"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="4dp"
+    android:fontFamily="@font/manrope_variable_font_wght"
+    android:text="0"
+    android:textSize="16sp"
+    app:layout_constraintBottom_toBottomOf="@id/tv_pack_offer_price"
+    app:layout_constraintEnd_toStartOf="@id/iv_add"
+    app:layout_constraintTop_toTopOf="@+id/tv_pack_offer_price" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,25 +4,23 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.sa.organicStore.database.entities.ProductEntity
-import com.sa.organicStore.databinding.RvHorizontalBinding
+import com.sa.organicStore.databinding.RvSavedProductItemBinding
+import com.sa.organicStore.databinding.RvVerticalBinding
+import com.sa.organicStore.model.ProductModel
 
-class HomeAdapter(
+class SavedAdapter(
     private val dataList: ArrayList<ProductEntity>,
     private val itemClickListener: OnItemClickListener
-) : RecyclerView.Adapter<HomeAdapter.MyViewHolder>() {
+) : RecyclerView.Adapter<SavedAdapter.MyViewHolder>() {
 
     interface OnItemClickListener {
-        fun onSaveButtonClick(position: Int)
-        fun onImageClick(position: Int)
+        fun onItemClick(position: Int)
     }
 
-    inner class MyViewHolder(private val binding: RvHorizontalBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class MyViewHolder(private val binding: RvSavedProductItemBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
-            binding.ivAdd.setOnClickListener {
-                itemClickListener.onSaveButtonClick(adapterPosition)
-            }
-            binding.ivBundlePack.setOnClickListener {
-                itemClickListener.onImageClick(adapterPosition)
+            binding.root.setOnClickListener {
+                itemClickListener.onItemClick(adapterPosition)
             }
         }
 
@@ -32,12 +30,11 @@ class HomeAdapter(
             binding.tvPackIngredients.text = pack.ingredients
             binding.tvPackOfferPrice.text = "$" + pack.offerPrice.toString()
             binding.tvPackRegularPrice.text = "$" + pack.actualPrice.toString()
-            binding.tvQuantity.text = pack.quantityCounter.toString()
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-        val binding = RvHorizontalBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = RvSavedProductItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return MyViewHolder(binding)
     }
 
@@ -48,9 +45,4 @@ class HomeAdapter(
     override fun getItemCount(): Int {
         return dataList.size
     }
-
-    fun getItemAtPosition(position: Int): ProductEntity {
-        return dataList[position]
-    }
-
 }

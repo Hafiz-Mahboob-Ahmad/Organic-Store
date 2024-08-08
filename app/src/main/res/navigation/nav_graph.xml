@@ -27,8 +27,8 @@
         android:label="fragment_bundle_details_page"
         tools:layout="@layout/fragment_bundle_details">
         <argument
-            android:name="packItemData"
-            app:argType="string" />
+            android:name="productId"
+            app:argType="integer" />
         <action
             android:id="@+id/action_bundleDetailsFragment_to_cartFragment"
             app:destination="@+id/cart_fragment"
@@ -94,7 +94,6 @@
         android:name="com.sa.organicStore.fragments.CartFragment"
         android:label="fragment_cart"
         tools:layout="@layout/fragment_cart">
-
 
     </fragment>
 

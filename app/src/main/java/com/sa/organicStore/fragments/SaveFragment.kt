@@ -14,6 +14,8 @@ import kotlinx.coroutines.launch
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.gson.Gson
+import com.sa.organicStore.adapter.ProductAdapter
+import com.sa.organicStore.adapter.SavedAdapter
 import com.sa.organicStore.utils.UserPrefs
 import com.sa.organicStore.viewmodel.SaveViewModel
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +23,7 @@ import kotlinx.coroutines.Dispatchers
 class SaveFragment : Fragment() {
 
     private lateinit var binding: FragmentSaveBinding
-    private lateinit var saveProductsAdapter: HomeAdapter
+    private lateinit var savedAdapter: SavedAdapter
     private val saveViewModel: SaveViewModel by viewModels()
 
 
@@ -43,13 +45,13 @@ class SaveFragment : Fragment() {
     private fun fetchSavedProducts() {
         lifecycleScope.launch(Dispatchers.IO) {
             val user = UserPrefs(requireContext()).getUser()
-            saveViewModel.fetchSavedProducts(user!!.userId)
+            saveViewModel.fetchSavedProductsByUserId(user!!.userId)
         }
     }
 
     private fun collectStateFlows() {
         lifecycleScope.launch {
-            saveViewModel.fetchSavedProducts.collect {
+            saveViewModel.fetchSavedProductsByUserId.collect {
                 setRecyclerView(it)
             }
         }
@@ -57,24 +59,18 @@ class SaveFragment : Fragment() {
 
     private fun setRecyclerView(productList: List<ProductEntity>) {
 
-        saveProductsAdapter = HomeAdapter(ArrayList(productList), object : HomeAdapter.OnItemClickListener {
-            override fun onSaveButtonClick(position: Int) {
-
+        savedAdapter = SavedAdapter(ArrayList(productList), object : SavedAdapter.OnItemClickListener {
+            override fun onItemClick(position: Int) {
+                val productId = productList[position].productId
+                navigateToBundleDetailsFragment(productId)
             }
 
-            override fun onImageClick(position: Int) {
-                val product = productList[position]
-                navigateToBundleDetailsFragment(product)
-            }
         })
-
-        binding.rvSaveProductData.layoutManager = LinearLayoutManager(requireContext())
-        binding.rvSaveProductData.adapter = saveProductsAdapter
+        binding.rvSaveProductData.adapter = savedAdapter
     }
 
-    private fun navigateToBundleDetailsFragment(pack: ProductEntity) {
-        val json: String = Gson().toJson(pack)
-        val action = SaveFragmentDirections.actionSaveFragmentToBundleDetailsFragment(json)
+    private fun navigateToBundleDetailsFragment(productId: Int) {
+        val action = SaveFragmentDirections.actionSaveFragmentToBundleDetailsFragment(productId = productId)
         findNavController().navigate(action)
     }
 }

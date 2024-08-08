@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.sa.organicStore.database.entities.CartModel
+import com.sa.organicStore.database.entities.ProductEntity
 
 @Dao
 interface CartDao {
@@ -14,7 +15,15 @@ interface CartDao {
     suspend fun insertCartProducts(cartProduct: CartModel)
 
     @Query("SELECT * FROM cart WHERE userId = :userId AND productId = :productId")
-    suspend fun getCartProduct(userId: Int, productId: Int) : CartModel?
+    suspend fun isCartProductExists(userId: Int, productId: Int): CartModel?
+
+    @Query(
+        "SELECT product.*, cart.quantity AS quantityCounter " +
+                "FROM product " +
+                "JOIN cart ON product.productId = cart.productId " +
+                "WHERE cart.userId = :userId "
+    )
+    suspend fun getCartProducts(userId: Int): List<ProductEntity>
 
     @Query(
         "UPDATE cart SET quantity = :quantity " +
@@ -22,6 +31,13 @@ interface CartDao {
     )
     suspend fun updateCartProductQuantity(quantity: Int, userId: Int, productId: Int)
 
+
+
+    @Query(
+        "DELETE FROM cart " +
+                "WHERE userId = :userId AND productId = :productId"
+    )
+    suspend fun deleteCartProduct(userId: Int, productId: Int)
 
 
 //    @Query(

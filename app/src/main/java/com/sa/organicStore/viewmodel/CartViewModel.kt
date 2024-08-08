@@ -5,24 +5,43 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.sa.organicStore.database.databaseInstance.AppDatabase
 import com.sa.organicStore.database.entities.CartModel
+import com.sa.organicStore.database.entities.ProductEntity
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class CartViewModel(application: Application) : AndroidViewModel(Application()) {
 
     private val appDatabase = AppDatabase.invoke(application)
 
+    private val _cartProducts = MutableStateFlow<List<ProductEntity>>(emptyList())
+    val cartProducts : StateFlow<List<ProductEntity>> get() = _cartProducts.asStateFlow()
+
     fun insertCartProducts(cartProduct: CartModel) {
         viewModelScope.launch(Dispatchers.IO) {
             appDatabase.getCartDao().insertCartProducts(cartProduct)
         }
     }
-
-    suspend fun getCartProduct(userId: Int, productId: Int): CartModel? {
-        return appDatabase.getCartDao().getCartProduct(userId, productId)
+    suspend fun isCartProductExists(userId: Int, productId: Int) : CartModel? {
+        return appDatabase.getCartDao().isCartProductExists(userId, productId)
+    }
+    fun getCartProducts(userId: Int) {
+        viewModelScope.launch (Dispatchers.IO){
+            _cartProducts.value = appDatabase.getCartDao().getCartProducts(userId)
+        }
     }
 
-    suspend fun updateCartProduct(quantity: Int, userId: Int, productId: Int) {
-        appDatabase.getCartDao().updateCartProductQuantity(quantity, userId, productId)
+    fun updateCartProduct(quantity: Int, userId: Int, productId: Int) {
+        viewModelScope.launch(Dispatchers.IO){
+            appDatabase.getCartDao().updateCartProductQuantity(quantity, userId, productId)
+        }
+    }
+
+    fun deleteCartProduct(userId: Int, productId: Int){
+        viewModelScope.launch (Dispatchers.IO){
+            appDatabase.getCartDao().deleteCartProduct(userId, productId)
+        }
     }
 }

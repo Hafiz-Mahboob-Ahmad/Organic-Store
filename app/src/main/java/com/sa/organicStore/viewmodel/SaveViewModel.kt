@@ -18,8 +18,8 @@ class SaveViewModel(application: Application) : AndroidViewModel(application) {
 
     private val appDatabase = AppDatabase.invoke(application)
 
-    private val _fetchSavedProducts = MutableStateFlow<List<ProductEntity>>(emptyList())
-    val fetchSavedProducts: StateFlow<List<ProductEntity>> get() = _fetchSavedProducts.asStateFlow()
+    private val _fetchSavedProductsByUserId = MutableStateFlow<List<ProductEntity>>(emptyList())
+    val fetchSavedProductsByUserId: StateFlow<List<ProductEntity>> get() = _fetchSavedProductsByUserId.asStateFlow()
 
     fun insertSaveProducts(product: SaveProductModel) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -27,10 +27,10 @@ class SaveViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun fetchSavedProducts(userId: Int) {
+    fun fetchSavedProductsByUserId(userId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            val products = appDatabase.getSaveProductDao().getProductsByUserId(userId)
-            _fetchSavedProducts.value = products
+            val products = appDatabase.getSaveProductDao().getSavedProductsByUserId(userId)
+            _fetchSavedProductsByUserId.value = products
         }
     }
 }

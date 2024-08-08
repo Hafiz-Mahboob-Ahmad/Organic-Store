@@ -26,27 +26,17 @@ class ProductViewModel(application: Application) : AndroidViewModel(application)
 
     private val appDatabase = AppDatabase.invoke(application)
 
-    init {
-        viewModelScope.launch(Dispatchers.IO) {
-            fetchInitialProducts()
+
+    fun fetchInitialProducts(userId: Int) {
+        viewModelScope.launch (Dispatchers.IO){
+            val popularProductsList = appDatabase.getProductDao().getAllProducts(AppConstants.POPULAR_PRODUCTS, userId)
+            val newProductsList = appDatabase.getProductDao().getAllProducts(AppConstants.NEW_ITEM, userId)
+            _popularProducts.value = popularProductsList
+            _newProducts.value = newProductsList
         }
     }
 
-
-    private val _userId = MutableStateFlow(0)
-    val userId: StateFlow<Int> get() = _userId.asStateFlow()
-
-    fun getUserId(userEmail: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val userId = appDatabase.getUserDAO().getUserId(userEmail)
-            _userId.value = userId
-        }
-    }
-
-    private suspend fun fetchInitialProducts() {
-        val popularProductsList = appDatabase.getProductDao().getAllProducts(AppConstants.POPULAR_PRODUCTS, userI)
-        val newProductsList = appDatabase.getProductDao().getAllProducts(AppConstants.NEW_ITEM)
-        _popularProducts.value = popularProductsList
-        _newProducts.value = newProductsList
+    suspend fun getProduct(productId: Int, userId: Int) : ProductEntity? {
+        return appDatabase.getProductDao().getProduct(productId, userId)
     }
 }

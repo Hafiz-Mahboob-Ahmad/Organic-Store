@@ -39,14 +39,14 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        fetchUserId()
+        fetchInitialProducts()
         collectStateFlows()
         setClickListeners()
     }
 
-    private fun fetchUserId() {
-            val userEmail = UserPrefs(requireContext()).getUser()!!.email
-            productViewModel.getUserId(userEmail)
+    private fun fetchInitialProducts() {
+        val userId = UserPrefs(requireContext()).getUser()!!.userId
+        productViewModel.fetchInitialProducts(userId)
     }
 
     private fun collectStateFlows() {
@@ -71,8 +71,8 @@ class HomeFragment : Fragment() {
             }
 
             override fun onImageClick(position: Int) {
-                val product = productList[position]
-                navigateToBundleDetailsFragment(product)
+                val productId = productList[position].productId
+                navigateToBundleDetailsFragment(productId)
             }
         })
         binding.rvPopularPack.adapter = popularPackAdapter
@@ -86,7 +86,7 @@ class HomeFragment : Fragment() {
             }
 
             override fun onImageClick(position: Int) {
-                val product = productList[position]
+                val product = productList[position].productId
                 navigateToBundleDetailsFragment(product)
             }
         })
@@ -113,9 +113,8 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun navigateToBundleDetailsFragment(pack: ProductEntity) {
-        val json: String = Gson().toJson(pack)
-        val action = HomeFragmentDirections.actionHomeFragmentToBundleDetailsFragment(packItemData = json)
+    private fun navigateToBundleDetailsFragment(productId: Int) {
+        val action = HomeFragmentDirections.actionHomeFragmentToBundleDetailsFragment(productId = productId)
         findNavController().navigate(action)
     }
 
