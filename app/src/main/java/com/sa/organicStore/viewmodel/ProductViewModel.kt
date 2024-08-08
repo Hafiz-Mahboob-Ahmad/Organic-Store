@@ -8,6 +8,7 @@ import com.sa.organicStore.constant.Constant
 import com.sa.organicStore.database.databaseInstance.AppDatabase
 import com.sa.organicStore.database.entities.ProductEntity
 import com.sa.organicStore.database.entities.SaveProductModel
+import com.sa.organicStore.utils.UserPrefs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,27 +28,25 @@ class ProductViewModel(application: Application) : AndroidViewModel(application)
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            insertInitialProducts()
             fetchInitialProducts()
         }
     }
 
-    private suspend fun insertInitialProducts() {
-        val existingProducts = appDatabase.getProductDao().getAllProducts()
-        if (existingProducts.isNullOrEmpty()) {
-            val popularPackList = Constant.getPopularPackData().onEach { it.category = AppConstants.POPULAR_PRODUCTS }
-            val newItemList = Constant.getOurNewItemData().onEach { it.category = AppConstants.NEW_ITEM }
-            appDatabase.getProductDao().insertProduct(popularPackList)
-            appDatabase.getProductDao().insertProduct(newItemList)
+
+    private val _userId = MutableStateFlow(0)
+    val userId: StateFlow<Int> get() = _userId.asStateFlow()
+
+    fun getUserId(userEmail: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val userId = appDatabase.getUserDAO().getUserId(userEmail)
+            _userId.value = userId
         }
     }
 
-    private fun fetchInitialProducts() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val popularProductsList = appDatabase.getProductDao().getAllProducts(AppConstants.POPULAR_PRODUCTS)
-            val newProductsList = appDatabase.getProductDao().getAllProducts(AppConstants.NEW_ITEM)
-            _popularProducts.value = popularProductsList
-            _newProducts.value = newProductsList
-        }
+    private suspend fun fetchInitialProducts() {
+        val popularProductsList = appDatabase.getProductDao().getAllProducts(AppConstants.POPULAR_PRODUCTS, userI)
+        val newProductsList = appDatabase.getProductDao().getAllProducts(AppConstants.NEW_ITEM)
+        _popularProducts.value = popularProductsList
+        _newProducts.value = newProductsList
     }
 }

@@ -11,7 +11,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class ProductEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    val productId: Int = 0,
     @TypeConverters(Converters::class)
     val image: ArrayList<Int>,
     val name: String,

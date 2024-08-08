@@ -3,13 +3,14 @@ package com.sa.organicStore.activities
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
-import com.google.gson.Gson
 import com.sa.organicStore.database.dao.UserDAO
 import com.sa.organicStore.database.databaseInstance.AppDatabase
 import com.sa.organicStore.database.entities.UserEntity
 import com.sa.organicStore.databinding.ActivitySignUpBinding
+import com.sa.organicStore.utils.UserPrefs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -40,9 +41,11 @@ class SignUpActivity : AppCompatActivity() {
                 Toast.makeText(this, "Name cannot be empty!", Toast.LENGTH_SHORT).show()
             } else if (!isValidEmail(email)) {
                 Toast.makeText(this, "Invalid email format!", Toast.LENGTH_SHORT).show()
-            } else if (!isValidPassword(password)) {
-                Toast.makeText(this, "Password must be at least 8 characters long and include a number, an uppercase letter, and a special character!", Toast.LENGTH_LONG).show()
-            } else {
+            }
+//            else if (!isValidPassword(password)) {
+//                Toast.makeText(this, "Password must be at least 8 characters long and include a number, an uppercase letter, and a special character!", Toast.LENGTH_LONG).show()
+//            }
+            else {
                 saveUserInDatabase(name, email, password)
             }
         }
@@ -66,9 +69,13 @@ class SignUpActivity : AppCompatActivity() {
             val user = userDao.getUserByEmail(email = email)
             if (user == null) {
                 val newUser = UserEntity(name = name, email = email, password = password)
-                userDao.insertUser(newUser)
-                saveLoginState(newUser)
-                navigateToHomeActivity()
+                Log.d("USER", "fun saveUserInDatabase: userId = ${newUser.userId}")
+                val userId = insertUser(newUser) // return Int value
+                newUser.userId = userId // Set the userId in the UserEntity object
+                saveUserInPref(newUser)
+                withContext(Dispatchers.Main) {
+                    navigateToHomeActivity()
+                }
             } else {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(this@SignUpActivity, "User already exists with this email.", Toast.LENGTH_SHORT).show()
@@ -77,16 +84,20 @@ class SignUpActivity : AppCompatActivity() {
         }
     }
 
-    private fun saveLoginState(newUser: UserEntity) {
-        val sharedPref = getSharedPreferences("user_prefs", MODE_PRIVATE)
-        val json: String = Gson().toJson(newUser)
-        with(sharedPref.edit()) {
-            putString("user", json)
-            putString("user_email", newUser.email)
-            apply()
-        }
+    private fun saveUserInPref(newUser: UserEntity) {
+        Log.d("USER", "fun saveUserInPref: userId= ${newUser.userId}")
+        UserPrefs(this@SignUpActivity).setUser(newUser)
     }
 
+    private suspend fun insertUser(newUser: UserEntity): Int {
+        return userDao.insertUser(newUser).toInt()
+    }
+
+    //    private fun insertUser(newUser: UserEntity) {
+//        lifecycleScope.launch(Dispatchers.IO) {
+//            userDao.insertUser(newUser)
+//        }
+//    }
     private fun navigateToHomeActivity() {
         startActivity(Intent(this, HomeActivity::class.java))
         finish()

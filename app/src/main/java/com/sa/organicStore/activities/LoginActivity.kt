@@ -3,6 +3,7 @@ package com.sa.organicStore.activities
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -11,6 +12,7 @@ import com.sa.organicStore.database.databaseInstance.AppDatabase
 import com.sa.organicStore.database.dao.UserDAO
 import com.sa.organicStore.database.entities.UserEntity
 import com.sa.organicStore.databinding.ActivityLoginBinding
+import com.sa.organicStore.utils.UserPrefs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -19,7 +21,6 @@ class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
     private lateinit var userDao: UserDAO
-    private lateinit var sharedPref: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +44,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun navigateToSignupActivity(){
+    private fun navigateToSignupActivity() {
         startActivity(Intent(this, SignUpActivity::class.java))
         finish()
     }
@@ -51,14 +52,19 @@ class LoginActivity : AppCompatActivity() {
     private fun loginUser(email: String?, password: String?) {
         if (email.isNullOrEmpty() || password.isNullOrEmpty()) {
             Toast.makeText(this, "Empty email or password!", Toast.LENGTH_SHORT).show()
-        } else if (!isValidEmail(email)) {
-            Toast.makeText(this, "Invalid email format!", Toast.LENGTH_SHORT).show()
-        }  else {
+        }
+//        else if (!isValidEmail(email)) {
+//            Toast.makeText(this, "Invalid email format!", Toast.LENGTH_SHORT).show()
+//        }
+        else {
             lifecycleScope.launch {
                 val user = userDao.getUserByEmailAndPassword(email, password)
                 if (user != null) {
-                    saveLoginState(user)
-                    navigateToHomeActivity()
+                    Log.d("USER", "fun loginUser: userId = ${user.userId}")
+                    saveUserInPref(user)
+                    withContext(Dispatchers.Main) {
+                        navigateToHomeActivity()
+                    }
                 } else {
                     withContext(Dispatchers.Main) {
                         Toast.makeText(this@LoginActivity, "User not found", Toast.LENGTH_SHORT).show()
@@ -72,13 +78,9 @@ class LoginActivity : AppCompatActivity() {
         return email != null && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 
-    private fun saveLoginState(user: UserEntity) {
-        sharedPref = getSharedPreferences("user_prefs", MODE_PRIVATE)
-        val json: String = Gson().toJson(user)
-        with(sharedPref.edit()) {
-            putString("user", json)
-            apply()
-        }
+    private fun saveUserInPref(newUser: UserEntity) {
+        Log.d("USER", "fun saveUserInPref: userId= ${newUser.userId}")
+        UserPrefs(this@LoginActivity).setUser(newUser)
     }
 
     private fun navigateToHomeActivity() {

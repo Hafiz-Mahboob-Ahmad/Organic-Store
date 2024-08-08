@@ -33,7 +33,7 @@
             android:id="@+id/action_bundleDetailsFragment_to_cartFragment"
             app:destination="@+id/cart_fragment"
             app:popUpTo="@id/home_fragment"
-            app:popUpToInclusive="false"/>
+            app:popUpToInclusive="false" />
     </fragment>
 
 
@@ -65,7 +65,11 @@
         android:id="@+id/save_fragment"
         android:name="com.sa.organicStore.fragments.SaveFragment"
         android:label="Save"
-        tools:layout="@layout/fragment_save" />
+        tools:layout="@layout/fragment_save">
+        <action
+            android:id="@+id/action_saveFragment_to_bundleDetailsFragment"
+            app:destination="@id/bundle_details_fragment" />
+    </fragment>
 
 
     <fragment

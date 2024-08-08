@@ -11,14 +11,9 @@ interface ProductDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertProduct(products: List<ProductEntity>)
 
-    @Query("SELECT * FROM product WHERE category = :category")
-    suspend fun getAllProducts(category: String): List<ProductEntity>
-
-    @Query("SELECT * FROM product")
-    suspend fun getAllProducts(): List<ProductEntity>?
-
-    @Query("SELECT * FROM product WHERE userEmail = :email")
-    fun getProductsByUserEmail(email: String): List<ProductEntity>
-
+    @Query("SELECT * FROM product " +
+            "JOIN cart ON product.productId = cart.id AND product.quantityCounter = cart.quantity " +
+            "WHERE cart.userId = :userId AND category = :category ")
+    suspend fun getAllProducts(category: String, userId: Int): List<ProductEntity>
 
 }

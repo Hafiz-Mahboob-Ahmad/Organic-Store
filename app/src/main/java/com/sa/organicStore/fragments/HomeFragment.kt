@@ -1,24 +1,23 @@
 package com.sa.organicStore.fragments
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.gson.Gson
 import com.sa.organicStore.adapter.HomeAdapter
-import com.sa.organicStore.database.databaseInstance.AppDatabase
 import com.sa.organicStore.database.entities.ProductEntity
 import com.sa.organicStore.database.entities.SaveProductModel
-import com.sa.organicStore.database.entities.UserEntity
 import com.sa.organicStore.databinding.FragmentHomeBinding
+import com.sa.organicStore.utils.UserPrefs
 import com.sa.organicStore.viewmodel.ProductViewModel
 import com.sa.organicStore.viewmodel.SaveViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
@@ -40,8 +39,14 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        fetchUserId()
         collectStateFlows()
         setClickListeners()
+    }
+
+    private fun fetchUserId() {
+            val userEmail = UserPrefs(requireContext()).getUser()!!.email
+            productViewModel.getUserId(userEmail)
     }
 
     private fun collectStateFlows() {
@@ -61,10 +66,8 @@ class HomeFragment : Fragment() {
     private fun setPopularPackRecyclerView(productList: List<ProductEntity>) {
         popularPackAdapter = HomeAdapter(ArrayList(productList), object : HomeAdapter.OnItemClickListener {
             override fun onSaveButtonClick(position: Int) {
-                val userId = getUserId()
-                val productId = productList[position].id
-                val saveProduct = SaveProductModel(userId = userId, productId = productId)
-                saveViewModel.insertSaveProducts(saveProduct)
+                val productId = productList[position].productId
+                saveProduct(productId)
             }
 
             override fun onImageClick(position: Int) {
@@ -78,10 +81,8 @@ class HomeFragment : Fragment() {
     private fun setOurNewItemRecyclerView(productList: List<ProductEntity>) {
         newItemAdapter = HomeAdapter(ArrayList(productList), object : HomeAdapter.OnItemClickListener {
             override fun onSaveButtonClick(position: Int) {
-                val userId = getUserId()
-                val productId = productList[position].id
-                val saveProduct = SaveProductModel(userId = userId, productId = productId)
-                saveViewModel.insertSaveProducts(saveProduct)
+                val productId = productList[position].productId
+                saveProduct(productId)
             }
 
             override fun onImageClick(position: Int) {
@@ -118,11 +119,10 @@ class HomeFragment : Fragment() {
         findNavController().navigate(action)
     }
 
-
-    private fun getUserId(): Long {
-        val sharedPreferences = requireContext().getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-        val userJson = sharedPreferences.getString("user", "") ?: ""
-        val user = Gson().fromJson(userJson, UserEntity::class.java)
-        return user.id
+    private fun saveProduct(productId: Int) {
+        val userId = UserPrefs(requireContext()).getUser()!!.userId
+        val saveProduct = SaveProductModel(userId = userId, productId = productId)
+        saveViewModel.insertSaveProducts(saveProduct)
+        Toast.makeText(requireContext(), "Saved", Toast.LENGTH_SHORT).show()
     }
 }

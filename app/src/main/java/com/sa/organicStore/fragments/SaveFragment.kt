@@ -1,27 +1,22 @@
 package com.sa.organicStore.fragments
 
-import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.sa.organicStore.R
 import com.sa.organicStore.adapter.HomeAdapter
 import com.sa.organicStore.databinding.FragmentSaveBinding
 import com.sa.organicStore.database.entities.ProductEntity
-import com.sa.organicStore.viewmodel.ProductViewModel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.gson.Gson
-import com.sa.organicStore.database.entities.SaveProductModel
+import com.sa.organicStore.utils.UserPrefs
 import com.sa.organicStore.viewmodel.SaveViewModel
+import kotlinx.coroutines.Dispatchers
 
 class SaveFragment : Fragment() {
 
@@ -41,12 +36,20 @@ class SaveFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        fetchSavedProducts()
         collectStateFlows()
+    }
+
+    private fun fetchSavedProducts() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            val user = UserPrefs(requireContext()).getUser()
+            saveViewModel.fetchSavedProducts(user!!.userId)
+        }
     }
 
     private fun collectStateFlows() {
         lifecycleScope.launch {
-            saveViewModel.fetchProducts.collect {
+            saveViewModel.fetchSavedProducts.collect {
                 setRecyclerView(it)
             }
         }
@@ -71,7 +74,7 @@ class SaveFragment : Fragment() {
 
     private fun navigateToBundleDetailsFragment(pack: ProductEntity) {
         val json: String = Gson().toJson(pack)
-        val action = HomeFragmentDirections.actionHomeFragmentToBundleDetailsFragment(packItemData = json)
+        val action = SaveFragmentDirections.actionSaveFragmentToBundleDetailsFragment(json)
         findNavController().navigate(action)
     }
 }

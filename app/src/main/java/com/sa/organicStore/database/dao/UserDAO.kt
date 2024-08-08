@@ -9,7 +9,10 @@ import com.sa.organicStore.database.entities.UserEntity
 interface UserDAO {
 
     @Insert
-    suspend fun insertUser(userEntity: UserEntity)
+    suspend fun insertUser(userEntity: UserEntity) :Long // Return the newly generated ID
+
+    @Query("SELECT userId FROM user WHERE email = :userEmail LIMIT 1")
+    suspend fun getUserId(userEmail: String) : Int
 
     @Query("SELECT * FROM user WHERE email = :email AND password = :password")
     suspend fun getUserByEmailAndPassword(email: String, password: String): UserEntity?

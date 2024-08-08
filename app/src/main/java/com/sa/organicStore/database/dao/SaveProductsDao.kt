@@ -4,7 +4,6 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Transaction
 import com.sa.organicStore.database.entities.ProductEntity
 import com.sa.organicStore.database.entities.SaveProductModel
 
@@ -12,20 +11,12 @@ import com.sa.organicStore.database.entities.SaveProductModel
 interface SaveProductsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertSaveProduct(product: SaveProductModel)
-
-    @Transaction
-    @Query(
-        "SELECT * FROM save " +
-                "INNER JOIN product ON save.productId = product.id " +
-                "INNER JOIN user ON save.userId = user.id"
-    )
-    suspend fun getSavedProductsWithDetails(): List<ProductEntity>
+    suspend fun insertSaveProduct(saveProduct: SaveProductModel)
 
     @Query(
         "SELECT * FROM product " +
-                "JOIN save ON product.id = save.productId "
+                "JOIN save ON product.productId = save.productId " +
+                "WHERE save.userId = :userId"
     )
-    suspend fun getProducts() : List<ProductEntity>
-
+    suspend fun getProductsByUserId(userId: Int): List<ProductEntity>
 }

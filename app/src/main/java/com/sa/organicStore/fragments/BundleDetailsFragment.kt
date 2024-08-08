@@ -1,26 +1,38 @@
 package com.sa.organicStore.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.widget.ViewPager2
 import com.google.gson.Gson
 import com.sa.organicStore.R
 import com.sa.organicStore.adapter.ProductImagesAdapter
+import com.sa.organicStore.database.entities.CartModel
+import com.sa.organicStore.database.entities.ProductEntity
 import com.sa.organicStore.databinding.FragmentBundleDetailsBinding
-import com.sa.organicStore.model.ProductModel
+import com.sa.organicStore.utils.UserPrefs
+import com.sa.organicStore.viewmodel.CartViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class BundleDetailsFragment : Fragment() {
 
     private lateinit var binding: FragmentBundleDetailsBinding
+    private lateinit var product: ProductEntity
     private val args: BundleDetailsFragmentArgs by navArgs()
-    private var quantityCounter: Int = 0
+    private val cartViewModel: CartViewModel by viewModels()
+    private var quantity: Int = 1
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,7 +50,8 @@ class BundleDetailsFragment : Fragment() {
     }
 
     private fun setupArguments() {
-        bindPackViews(Gson().fromJson(args.packItemData, ProductModel::class.java))
+        product = Gson().fromJson(args.packItemData, ProductEntity::class.java)
+        bindPackViews(product)
     }
 
     private fun setupClickListeners() {
@@ -54,22 +67,55 @@ class BundleDetailsFragment : Fragment() {
         binding.btnBuyNow.setOnClickListener {
             navigateToCartFragment()
         }
+        binding.ivShoppingTrolley.setOnClickListener {
+            insertProductIntoCart()
+        }
+    }
+
+    private fun insertProductIntoCart() {
+        val productId = product.productId
+        Log.d("Bundle", "fun insertProductIntoCart : productId = $productId")
+        val userId = UserPrefs(requireContext()).getUser()!!.userId
+        Log.d("Bundle", "fun insertProductIntoCart : userId = $userId")
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            val isCartProductExists: CartModel? =
+                cartViewModel.getCartProduct(userId = userId, productId = productId)
+            if (isCartProductExists == null) {
+                val cartModel = CartModel(
+                    userId = userId,
+                    productId = productId,
+                    quantity = quantity
+                )
+                cartViewModel.insertCartProducts(cartModel)
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(requireContext(), "Added to cart.", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                cartViewModel.updateCartProduct(quantity, userId, productId)
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(requireContext(), "Quantity Updated to $quantity.", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+
     }
 
     private fun increaseCounter() {
-        quantityCounter++
+        quantity++
         updateCounter()
     }
 
     private fun decreaseCounter() {
-        if (quantityCounter > 0) {
-            quantityCounter--
+        if (quantity > 0) {
+            quantity--
         }
         updateCounter()
     }
 
     private fun updateCounter() {
-        binding.tvQuantityCounter.text = quantityCounter.toString()
+        binding.tvQuantityCounter.text = quantity.toString()
     }
 
     private fun navigateToCartFragment() {
@@ -77,7 +123,7 @@ class BundleDetailsFragment : Fragment() {
         findNavController().navigate(action)
     }
 
-    private fun bindPackViews(itemData: ProductModel) {
+    private fun bindPackViews(itemData: ProductEntity) {
         setupViewPager(itemData.image)
         binding.tvProductName.text = itemData.name
         binding.tvProductWeight.text = itemData.weight.toString()

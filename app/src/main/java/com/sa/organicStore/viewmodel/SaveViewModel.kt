@@ -12,41 +12,25 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class SaveViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val _fetchSavedProductsWithDetails = MutableStateFlow<List<ProductEntity>>(emptyList())
-    val fetchSavedProductsWithDetails: StateFlow<List<ProductEntity>> get() = _fetchSavedProductsWithDetails.asStateFlow()
-
-
-    private val _fetchProducts = MutableStateFlow<List<ProductEntity>>(emptyList())
-    val fetchProducts: StateFlow<List<ProductEntity>> get() = _fetchProducts.asStateFlow()
-
     private val appDatabase = AppDatabase.invoke(application)
 
-    init {
-        fetchSavedProductsWithDetails()
-        fetchProducts()
-    }
+    private val _fetchSavedProducts = MutableStateFlow<List<ProductEntity>>(emptyList())
+    val fetchSavedProducts: StateFlow<List<ProductEntity>> get() = _fetchSavedProducts.asStateFlow()
 
-    private fun fetchSavedProductsWithDetails() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val products = appDatabase.getSaveProductDao().getSavedProductsWithDetails()
-            _fetchSavedProductsWithDetails.value = products
-        }
-    }
-
-    private fun fetchProducts() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val products = appDatabase.getSaveProductDao().getProducts()
-            _fetchProducts.value = products
-        }
-    }
-
-    fun insertSaveProducts(product: SaveProductModel){
+    fun insertSaveProducts(product: SaveProductModel) {
         viewModelScope.launch(Dispatchers.IO) {
             appDatabase.getSaveProductDao().insertSaveProduct(product)
-            fetchSavedProductsWithDetails() //refresh the saved products list after insertion
+        }
+    }
+
+    fun fetchSavedProducts(userId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val products = appDatabase.getSaveProductDao().getProductsByUserId(userId)
+            _fetchSavedProducts.value = products
         }
     }
 }
