@@ -77,9 +77,6 @@
         android:label="fragment_popular_pack_and_new_item"
         tools:layout="@layout/fragment_product">
         <argument
-            android:name="productItemData"
-            app:argType="string" />
-        <argument
             android:name="title"
             app:argType="string" />
         <action

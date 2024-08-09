@@ -17,12 +17,20 @@ class ProductAdapter(
     interface OnItemClickListener {
         fun onSaveButtonClick(position: Int)
         fun onImageClick(position: Int)
+        fun onIncreaseQuantity(position: Int)
+        fun onDecreaseQuantity(position: Int)
     }
 
     inner class MyViewHolder(private val binding: RvVerticalBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
-            binding.ivAdd.setOnClickListener {
+            binding.ivSave.setOnClickListener {
                 itemClickListener.onSaveButtonClick(adapterPosition)
+            }
+            binding.ivDecreaseQuantity.setOnClickListener {
+                itemClickListener.onDecreaseQuantity(adapterPosition)
+            }
+            binding.ivIncreaseQuantity.setOnClickListener {
+                itemClickListener.onIncreaseQuantity(adapterPosition)
             }
             binding.ivBundlePack.setOnClickListener {
                 itemClickListener.onImageClick(adapterPosition)
@@ -39,8 +47,11 @@ class ProductAdapter(
 
             if ( pack.quantityCounter == 0){
                 binding.tvQuantity.visibility = View.GONE
+                binding.ivDecreaseQuantity.visibility = View.GONE
             } else {
+                binding.tvQuantity.visibility = View.VISIBLE
                 binding.tvQuantity.text = pack.quantityCounter.toString()
+                binding.ivDecreaseQuantity.visibility = View.VISIBLE
             }
         }
     }

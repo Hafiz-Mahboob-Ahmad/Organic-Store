@@ -25,6 +25,9 @@ class ProductViewModel(application: Application) : AndroidViewModel(application)
     val popularProducts: StateFlow<List<ProductEntity>> get() = _popularProducts.asStateFlow()
 
 
+    private val _productsByCategory = MutableStateFlow<List<ProductEntity>>(emptyList())
+    val productsByCategory: StateFlow<List<ProductEntity>> get() = _productsByCategory.asStateFlow()
+
     private val _newProducts = MutableStateFlow<List<ProductEntity>>(emptyList())
     val newProducts: StateFlow<List<ProductEntity>> get() = _newProducts.asStateFlow()
 
@@ -37,7 +40,14 @@ class ProductViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    suspend fun getDefaultProductDetails(productId: Int) : ProductEntity {
+    fun fetchProductsByCategory(userID: Int, category: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val productsByCategory = appDatabase.getProductDao().getAllProducts(category, userID)
+            _productsByCategory.value = productsByCategory
+        }
+    }
+
+    suspend fun getDefaultProductDetails(productId: Int): ProductEntity {
         return appDatabase.getProductDao().getDefaultProductDetails(productId)
     }
 }

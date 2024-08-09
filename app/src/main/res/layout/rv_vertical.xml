@@ -66,25 +66,45 @@
         app:layout_constraintTop_toTopOf="@id/tv_pack_offer_price" />
 
     <ImageView
-        android:id="@+id/iv_add"
+        android:id="@+id/iv_increase_quantity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:background="@drawable/ic_add"
         android:contentDescription="@string/add_button_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tv_pack_offer_price" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_pack_ingredients" />
 
     <TextView
-    android:id="@+id/tv_quantity"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginEnd="4dp"
-    android:fontFamily="@font/manrope_variable_font_wght"
-    android:text="0"
-    android:textSize="16sp"
-    app:layout_constraintBottom_toBottomOf="@id/tv_pack_offer_price"
-    app:layout_constraintEnd_toStartOf="@id/iv_add"
-    app:layout_constraintTop_toTopOf="@+id/tv_pack_offer_price" />
+        android:id="@+id/tv_quantity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:fontFamily="@font/manrope_variable_font_wght"
+        android:text="0"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@id/iv_increase_quantity"
+        app:layout_constraintEnd_toStartOf="@id/iv_increase_quantity"
+        app:layout_constraintTop_toTopOf="@+id/iv_increase_quantity" />
+
+    <ImageView
+        android:id="@+id/iv_decrease_quantity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:src="@drawable/ic_decrease_quantity"
+        app:layout_constraintBottom_toBottomOf="@id/iv_increase_quantity"
+        app:layout_constraintEnd_toStartOf="@id/tv_quantity"
+        app:layout_constraintTop_toTopOf="@id/iv_increase_quantity" />
+
+    <ImageView
+        android:id="@+id/iv_save"
+        android:layout_width="18dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="-10dp"
+        android:src="@drawable/ic_save"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

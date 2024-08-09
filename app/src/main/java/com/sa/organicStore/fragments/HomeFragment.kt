@@ -155,35 +155,30 @@ class HomeFragment : Fragment() {
     }
 
 
-    private fun setClickListeners() {
-        binding.tvViewAllPopularPack.setOnClickListener {
-            val productList = productViewModel.popularProducts.value
-            navigateToProductFragment(ArrayList(productList), "Popular Pack")
-        }
-
-        binding.tvViewAllOurNewItem.setOnClickListener {
-            val productList = productViewModel.newProducts.value
-            navigateToProductFragment(ArrayList(productList), "New Item")
-        }
-    }
-
-    private fun navigateToProductFragment(dataList: ArrayList<ProductEntity>, title: String) {
-        if (dataList.isNotEmpty()) {
-            val json: String = Gson().toJson(dataList)
-            val action = HomeFragmentDirections.actionHomeFragmentToProductFragment(json, title)
-            findNavController().navigate(action)
-        }
-    }
-
-    private fun navigateToBundleDetailsFragment(productId: Int) {
-        val action = HomeFragmentDirections.actionHomeFragmentToBundleDetailsFragment(productId = productId)
-        findNavController().navigate(action)
-    }
-
     private fun saveProduct(productId: Int) {
         val userId = UserPrefs(requireContext()).getUser()!!.userId
         val saveProduct = SaveProductModel(userId = userId, productId = productId)
         saveViewModel.insertSaveProducts(saveProduct)
         Toast.makeText(requireContext(), "Saved", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun setClickListeners() {
+        binding.tvViewAllPopularPack.setOnClickListener {
+            navigateToProductFragment( "Popular Pack")
+        }
+
+        binding.tvViewAllOurNewItem.setOnClickListener {
+            navigateToProductFragment( "New Item")
+        }
+    }
+
+    private fun navigateToProductFragment(title: String) {
+        val action = HomeFragmentDirections.actionHomeFragmentToProductFragment(title)
+        findNavController().navigate(action)
+    }
+
+    private fun navigateToBundleDetailsFragment(productId: Int) {
+        val action = HomeFragmentDirections.actionHomeFragmentToBundleDetailsFragment(productId = productId)
+        findNavController().navigate(action)
     }
 }
