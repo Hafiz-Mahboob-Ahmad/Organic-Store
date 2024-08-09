@@ -53,9 +53,9 @@ class LoginActivity : AppCompatActivity() {
         if (email.isNullOrEmpty() || password.isNullOrEmpty()) {
             Toast.makeText(this, "Empty email or password!", Toast.LENGTH_SHORT).show()
         }
-//        else if (!isValidEmail(email)) {
-//            Toast.makeText(this, "Invalid email format!", Toast.LENGTH_SHORT).show()
-//        }
+        else if (!isValidEmail(email)) {
+            Toast.makeText(this, "Invalid email format!", Toast.LENGTH_SHORT).show()
+        }
         else {
             lifecycleScope.launch {
                 val user = userDao.getUserByEmailAndPassword(email, password)

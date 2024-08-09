@@ -56,7 +56,6 @@ class BundleDetailsFragment : Fragment() {
     ): View {
         binding = FragmentBundleDetailsBinding.inflate(inflater, container, false)
         userId = UserPrefs(requireContext()).getUser()!!.userId
-        isCartProductExists = CartModel(userId = userId, productId = productId, quantity = quantity)
         return binding.root
     }
 
@@ -198,14 +197,13 @@ class BundleDetailsFragment : Fragment() {
         binding.btnBuyNow.setOnClickListener {
             navigateToCartFragment()
         }
-        binding.ivShoppingTrolley.setOnClickListener {
-            //insertCartProduct()
-        }
     }
 
 
     private fun insertCartProduct() {
         lifecycleScope.launch(Dispatchers.IO) {
+            val isCartProductExists: CartModel? =
+                cartViewModel.isCartProductExists(userId, productId)
             if (isCartProductExists == null) {
                 val cartModel = CartModel(userId = userId, productId = productId, quantity = quantity)
                 cartViewModel.insertCartProducts(cartModel)
@@ -219,18 +217,23 @@ class BundleDetailsFragment : Fragment() {
     private fun increaseCounter() {
         quantity++
         insertCartProduct()
-        updateCounter()
+        updateQuantityUI()
     }
 
     private fun decreaseCounter() {
         if (quantity > 0) {
             quantity--
-            insertCartProduct()
+            if (quantity > 0) {
+                insertCartProduct()
+            } else {
+                cartViewModel.deleteCartProduct(userId, productId)
+            }
+
         }
-        updateCounter()
+        updateQuantityUI()
     }
 
-    private fun updateCounter() {
+    private fun updateQuantityUI() {
         binding.tvQuantityCounter.text = quantity.toString()
     }
 
