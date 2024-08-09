@@ -62,10 +62,14 @@ class ProductViewModel(application: Application) : AndroidViewModel(application)
 
 
     // Default product for BundleDetailsFragment
-    fun getDefaultProductDetails(productId: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            _defaultProductDetails.value = appDatabase.getProductDao().getDefaultProductDetails(productId)
-        }
+//    fun getDefaultProductDetails(productId: Int) {
+//        viewModelScope.launch(Dispatchers.IO) {
+//            _defaultProductDetails.value = appDatabase.getProductDao().getDefaultProductDetails(productId)
+//        }
+//    }
+
+    suspend fun getDefaultProductDetails(productId: Int) : ProductEntity {
+        return appDatabase.getProductDao().getDefaultProductDetails(productId)
     }
 
 

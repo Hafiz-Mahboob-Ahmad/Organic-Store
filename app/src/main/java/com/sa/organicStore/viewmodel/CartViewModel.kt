@@ -17,26 +17,16 @@ class CartViewModel(application: Application) : AndroidViewModel(Application()) 
     private val appDatabase = AppDatabase.invoke(application)
 
     private val _cartProducts = MutableStateFlow<List<ProductEntity>>(emptyList())
-    val cartProducts : StateFlow<List<ProductEntity>> get() = _cartProducts.asStateFlow()
-
+    val cartProducts: StateFlow<List<ProductEntity>> get() = _cartProducts.asStateFlow()
 
 
     private val _cartProductDetails = MutableStateFlow<ProductEntity?>(null)
-    val cartProductDetails : StateFlow<ProductEntity?> get() = _cartProductDetails
-
+    val cartProductDetails: StateFlow<ProductEntity?> get() = _cartProductDetails
 
 
     private val _isCartProductExists = MutableStateFlow<CartModel?>(null)
-    val isCartProductExists : StateFlow<CartModel?> get() = _isCartProductExists
+    val isCartProductExists: StateFlow<CartModel?> get() = _isCartProductExists
 
-
-
-    // Cart Product for BundleDetailsFragment
-    fun getCartProductDetails(productId: Int, userId: Int) {
-        viewModelScope.launch (Dispatchers.IO){
-            _cartProductDetails.value = appDatabase.getCartDao().getCartProductDetails(productId, userId)
-        }
-    }
 
 
 
@@ -46,28 +36,48 @@ class CartViewModel(application: Application) : AndroidViewModel(Application()) 
         }
     }
 
-
-    fun isCartProductExists(userId: Int, productId: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            _isCartProductExists.value = appDatabase.getCartDao().isCartProductExists(userId, productId)
-        }
-    }
-
-
     fun getCartProducts(userId: Int) {
         viewModelScope.launch (Dispatchers.IO){
             _cartProducts.value = appDatabase.getCartDao().getCartProducts(userId)
         }
     }
 
+
+//    fun isCartProductExists(userId: Int, productId: Int) {
+//        viewModelScope.launch(Dispatchers.IO) {
+//            _isCartProductExists.value = appDatabase.getCartDao().isCartProductExists(userId, productId)
+//        }
+//    }
+//
+//
+
+//    // Cart Product for BundleDetailsFragment
+//    fun getCartProductDetails(productId: Int, userId: Int) {
+//        viewModelScope.launch(Dispatchers.IO) {
+//            _cartProductDetails.value = appDatabase.getCartDao().getCartProductDetails(productId, userId)
+//        }
+//    }
+
+    suspend fun isCartProductExists(userId: Int, productId: Int) : CartModel? {
+        return appDatabase.getCartDao().isCartProductExists(userId, productId)
+    }
+
+    suspend fun getCartProductDetails(productId: Int, userId: Int): ProductEntity {
+        return appDatabase.getCartDao().getCartProductDetails(productId, userId)
+    }
+
+
+
+
+
     fun updateCartProduct(quantity: Int, userId: Int, productId: Int) {
-        viewModelScope.launch(Dispatchers.IO){
+        viewModelScope.launch(Dispatchers.IO) {
             appDatabase.getCartDao().updateCartProductQuantity(quantity, userId, productId)
         }
     }
 
-    fun deleteCartProduct(userId: Int, productId: Int){
-        viewModelScope.launch (Dispatchers.IO){
+    fun deleteCartProduct(userId: Int, productId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
             appDatabase.getCartDao().deleteCartProduct(userId, productId)
         }
     }
