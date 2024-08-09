@@ -1,6 +1,7 @@
 package com.sa.organicStore.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.sa.organicStore.database.entities.ProductEntity
@@ -32,7 +33,12 @@ class HomeAdapter(
             binding.tvPackIngredients.text = pack.ingredients
             binding.tvPackOfferPrice.text = "$" + pack.offerPrice.toString()
             binding.tvPackRegularPrice.text = "$" + pack.actualPrice.toString()
-            binding.tvQuantity.text = pack.quantityCounter.toString()
+
+            if ( pack.quantityCounter == 0){
+                binding.tvQuantity.visibility = View.GONE
+            } else {
+                binding.tvQuantity.text = pack.quantityCounter.toString()
+            }
         }
     }
 

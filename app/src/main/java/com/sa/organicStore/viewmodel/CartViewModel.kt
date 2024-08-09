@@ -19,14 +19,41 @@ class CartViewModel(application: Application) : AndroidViewModel(Application()) 
     private val _cartProducts = MutableStateFlow<List<ProductEntity>>(emptyList())
     val cartProducts : StateFlow<List<ProductEntity>> get() = _cartProducts.asStateFlow()
 
+
+
+    private val _cartProductDetails = MutableStateFlow<ProductEntity?>(null)
+    val cartProductDetails : StateFlow<ProductEntity?> get() = _cartProductDetails
+
+
+
+    private val _isCartProductExists = MutableStateFlow<CartModel?>(null)
+    val isCartProductExists : StateFlow<CartModel?> get() = _isCartProductExists
+
+
+
+    // Cart Product for BundleDetailsFragment
+    fun getCartProductDetails(productId: Int, userId: Int) {
+        viewModelScope.launch (Dispatchers.IO){
+            _cartProductDetails.value = appDatabase.getCartDao().getCartProductDetails(productId, userId)
+        }
+    }
+
+
+
     fun insertCartProducts(cartProduct: CartModel) {
         viewModelScope.launch(Dispatchers.IO) {
             appDatabase.getCartDao().insertCartProducts(cartProduct)
         }
     }
-    suspend fun isCartProductExists(userId: Int, productId: Int) : CartModel? {
-        return appDatabase.getCartDao().isCartProductExists(userId, productId)
+
+
+    fun isCartProductExists(userId: Int, productId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _isCartProductExists.value = appDatabase.getCartDao().isCartProductExists(userId, productId)
+        }
     }
+
+
     fun getCartProducts(userId: Int) {
         viewModelScope.launch (Dispatchers.IO){
             _cartProducts.value = appDatabase.getCartDao().getCartProducts(userId)

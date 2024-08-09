@@ -25,6 +25,9 @@ import com.sa.organicStore.utils.UserPrefs
 import com.sa.organicStore.viewmodel.CartViewModel
 import com.sa.organicStore.viewmodel.ProductViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.properties.Delegates
@@ -32,12 +35,20 @@ import kotlin.properties.Delegates
 class BundleDetailsFragment : Fragment() {
 
     private lateinit var binding: FragmentBundleDetailsBinding
+
+    private var userId by Delegates.notNull<Int>()
     private var productId by Delegates.notNull<Int>()
+    private var quantity: Int = 0
+
     private val args: BundleDetailsFragmentArgs by navArgs()
+
     private val productViewModel: ProductViewModel by viewModels()
     private val cartViewModel: CartViewModel by viewModels()
-    private var userId by Delegates.notNull<Int>()
-    private var quantity: Int = 0
+
+    private lateinit var defaultProductDetails: ProductEntity
+    private var cartProductDetails: ProductEntity? = null
+    private var isCartProductExists: CartModel? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,25 +63,83 @@ class BundleDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupArguments()
-        setupClickListeners()
+        fetchStateFlows()
+        collectStateFlows()
+        setProductDetails()
+        setClickListeners()
     }
 
     private fun setupArguments() {
         productId = args.productId
+        Log.d("TAG", "fun setupArguments: productId = $productId")
+    }
+
+    private fun fetchStateFlows() {
+        productViewModel.getDefaultProductDetails(productId)
+        cartViewModel.getCartProductDetails(productId, userId)
+        cartViewModel.isCartProductExists(userId, productId)
+    }
+
+    private fun collectStateFlows() {
         lifecycleScope.launch(Dispatchers.IO) {
-            val product: ProductEntity? = productViewModel.getProduct(productId, userId)
-            withContext(Dispatchers.Main) {
-                if (product != null) {
-                    bindPackViews(product)
-                } else {
-                    Log.e("Bundle", "Product not found for productId: $productId and userId: $userId")
-                    Toast.makeText(requireContext(), "Product not found", Toast.LENGTH_SHORT).show()
+            productViewModel.defaultProductDetails
+                .filter { it.productId != 0 } // Assuming productId != 0 indicates valid data
+                .collect { product ->
+                    Log.d(
+                        "TAG", "fun collectStateFlows(): name = ${product.name} \n " +
+                                "actualPrice = ${product.actualPrice} \n" +
+                                "offerPrice = ${product.offerPrice} \n" +
+                                "weight = ${product.weight} \n" +
+                                "weightUnit = ${product.weightUnit} \n" +
+                                "ingredients = ${product.ingredients} \n"
+                    )
+
+                    defaultProductDetails = product
+
+                    Log.d(
+                        "TAG", "defaultProductDetails: name = ${defaultProductDetails.name} \n " +
+                                "actualPrice = ${defaultProductDetails.actualPrice} \n" +
+                                "offerPrice = ${defaultProductDetails.offerPrice} \n" +
+                                "weight = ${defaultProductDetails.weight} \n" +
+                                "weightUnit = ${defaultProductDetails.weightUnit} \n" +
+                                "ingredients = ${defaultProductDetails.ingredients} \n"
+                    )
                 }
+        }
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            cartViewModel.cartProductDetails.collect {
+                cartProductDetails = it
+            }
+        }
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            cartViewModel.isCartProductExists.collect {
+                isCartProductExists = it
             }
         }
     }
 
-    private fun setupClickListeners() {
+//    private fun setProductDetails() {
+//        val product = isCartProductExists?.let { cartProductDetails } ?: defaultProductDetails
+//
+//        product?.let {
+//            setPackViews(it)
+//        } ?: run {
+//            Log.e("BundleDetailsFragment", "Product details are not yet initialized")
+//        }
+//    }
+
+    private fun setProductDetails() {
+
+        if (isCartProductExists != null) {
+            setPackViews(cartProductDetails)
+        } else {
+            setPackViews(defaultProductDetails)
+        }
+    }
+
+    private fun setClickListeners() {
         binding.ivDecreaseQuantity.setOnClickListener {
             decreaseCounter()
         }
@@ -89,30 +158,13 @@ class BundleDetailsFragment : Fragment() {
     }
 
     private fun insertProductIntoCart() {
-        val productId = productId
-        val userId = UserPrefs(requireContext()).getUser()!!.userId
-
-        lifecycleScope.launch(Dispatchers.IO) {
-            val isCartProductExists: CartModel? =
-                cartViewModel.isCartProductExists(userId = userId, productId = productId)
-            if (isCartProductExists == null) {
-                val cartModel = CartModel(
-                    userId = userId,
-                    productId = productId,
-                    quantity = quantity
-                )
-                cartViewModel.insertCartProducts(cartModel)
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(requireContext(), "Added to cart.", Toast.LENGTH_SHORT).show()
-                }
-            } else {
-                cartViewModel.updateCartProduct(quantity, userId, productId)
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(requireContext(), "Updated", Toast.LENGTH_SHORT).show()
-                }
-            }
+        if (isCartProductExists == null) {
+            cartViewModel.insertCartProducts(CartModel(userId = userId, productId = productId, quantity = quantity))
+            Toast.makeText(requireContext(), "Added to cart.", Toast.LENGTH_SHORT).show()
+        } else {
+            cartViewModel.updateCartProduct(quantity, userId, productId)
+            Toast.makeText(requireContext(), "Updated", Toast.LENGTH_SHORT).show()
         }
-
     }
 
     private fun increaseCounter() {
@@ -136,8 +188,8 @@ class BundleDetailsFragment : Fragment() {
         findNavController().navigate(action)
     }
 
-    private fun bindPackViews(itemData: ProductEntity) {
-        setupViewPager(itemData.image)
+    private fun setPackViews(itemData: ProductEntity?) {
+        setViewPager(itemData!!.image)
         binding.tvProductName.text = itemData.name
         binding.tvProductWeight.text = itemData.weight.toString()
         binding.tvProductWeightUnit.text = itemData.weightUnit
@@ -147,9 +199,9 @@ class BundleDetailsFragment : Fragment() {
 
     }
 
-    private fun setupViewPager(imageArray: ArrayList<Int>) {
+    private fun setViewPager(imageArray: ArrayList<Int>) {
         binding.vpProductImages.adapter = ProductImagesAdapter(imageArray)
-        setupDotsIndicator(imageArray)
+        setDotsIndicator(imageArray)
         binding.vpProductImages.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
@@ -158,7 +210,7 @@ class BundleDetailsFragment : Fragment() {
         })
     }
 
-    private fun setupDotsIndicator(imageArray: ArrayList<Int>) {
+    private fun setDotsIndicator(imageArray: ArrayList<Int>) {
         val dots = arrayOfNulls<ImageView>(imageArray.size)
         binding.dotsLayout.removeAllViews()
         for (i in dots.indices) {

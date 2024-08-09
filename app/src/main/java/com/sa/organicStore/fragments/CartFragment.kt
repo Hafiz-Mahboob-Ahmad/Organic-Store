@@ -54,6 +54,7 @@ class CartFragment : Fragment() {
                 productList = ArrayList()
                 productList.addAll(it)
                 setRecyclerView(productList)
+                updateTotal()
             }
         }
     }
