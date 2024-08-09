@@ -47,7 +47,7 @@ class BundleDetailsFragment : Fragment() {
 
     private lateinit var defaultProductDetails: ProductEntity
     private var cartProductDetails: ProductEntity? = null
-    //private var isCartProductExists: CartModel? = null
+    private var isCartProductExists: CartModel? = null
 
 
     override fun onCreateView(
@@ -56,6 +56,7 @@ class BundleDetailsFragment : Fragment() {
     ): View {
         binding = FragmentBundleDetailsBinding.inflate(inflater, container, false)
         userId = UserPrefs(requireContext()).getUser()!!.userId
+        isCartProductExists = CartModel(userId = userId, productId = productId, quantity = quantity)
         return binding.root
     }
 
@@ -168,20 +169,19 @@ class BundleDetailsFragment : Fragment() {
             val isCartProductExists: CartModel? =
                 cartViewModel.isCartProductExists(userId, productId)
 
-            val productEntity = if (isCartProductExists == null) {
-                productViewModel.getDefaultProductDetails(productId)
+            if (isCartProductExists == null) {
+                withContext(Dispatchers.Main) {
+                    setPackViews(productViewModel.getDefaultProductDetails(productId))
+                }
+
             } else {
-                cartViewModel.getCartProductDetails(productId, userId)
+                val cartProduct: ProductEntity = cartViewModel.getCartProductDetails(productId, userId)
+                withContext(Dispatchers.Main) {
+                    setPackViews(cartProduct)
+                    Log.d("Quantity", "Cart Quantity = ${cartProduct.quantityCounter}")
+                }
             }
 
-            withContext(Dispatchers.Main) {
-                setPackViews(productEntity)
-                Toast.makeText(
-                    requireContext(),
-                    if (isCartProductExists == null) "Default Product" else "Cart Product",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
         }
     }
 
@@ -199,26 +199,18 @@ class BundleDetailsFragment : Fragment() {
             navigateToCartFragment()
         }
         binding.ivShoppingTrolley.setOnClickListener {
-            insertProductIntoCart()
+            //insertCartProduct()
         }
     }
 
 
-    private fun insertProductIntoCart() {
+    private fun insertCartProduct() {
         lifecycleScope.launch(Dispatchers.IO) {
-            val isCartProductExists = cartViewModel.isCartProductExists(userId, productId)
-
             if (isCartProductExists == null) {
                 val cartModel = CartModel(userId = userId, productId = productId, quantity = quantity)
                 cartViewModel.insertCartProducts(cartModel)
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(requireContext(), "Added to cart.", Toast.LENGTH_SHORT).show()
-                }
             } else {
                 cartViewModel.updateCartProduct(quantity, userId, productId)
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(requireContext(), "Updated", Toast.LENGTH_SHORT).show()
-                }
             }
         }
     }
@@ -226,12 +218,14 @@ class BundleDetailsFragment : Fragment() {
 
     private fun increaseCounter() {
         quantity++
+        insertCartProduct()
         updateCounter()
     }
 
     private fun decreaseCounter() {
         if (quantity > 0) {
             quantity--
+            insertCartProduct()
         }
         updateCounter()
     }
@@ -253,6 +247,8 @@ class BundleDetailsFragment : Fragment() {
         binding.tvRegularPrice.text = "$" + itemData.actualPrice.toString()
         binding.tvOfferPrice.text = "$" + itemData.offerPrice.toString()
         binding.tvProductDetailsDescription.text = itemData.description
+        binding.tvQuantityCounter.text = itemData.quantityCounter.toString()
+        quantity = itemData.quantityCounter
 
     }
 

@@ -62,11 +62,9 @@ class CartFragment : Fragment() {
     private fun setRecyclerView(productList: ArrayList<ProductEntity>) {
         cardAdapter = CartAdapter(productList, object : CartAdapter.CartListener {
             override fun onDelete(position: Int) {
+                deleteCartProduct(productList[position].productId)
                 productList.removeAt(position)
                 cardAdapter.notifyItemRemoved(position)
-
-                //delete from table
-                deleteCartProduct(productList[position].productId)
                 updateTotal()
             }
 
