@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class CartViewModel(application: Application) : AndroidViewModel(Application()) {
 
@@ -81,4 +82,11 @@ class CartViewModel(application: Application) : AndroidViewModel(Application()) 
             appDatabase.getCartDao().deleteCartProduct(userId, productId)
         }
     }
+
+    suspend fun isCartEmpty(userId: Int): Boolean {
+        return withContext(Dispatchers.IO) {
+            appDatabase.getCartDao().isCartEmpty(userId = userId)
+        }
+    }
+
 }

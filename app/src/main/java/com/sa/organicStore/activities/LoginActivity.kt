@@ -50,24 +50,30 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun loginUser(email: String?, password: String?) {
-        if (email.isNullOrEmpty() || password.isNullOrEmpty()) {
-            Toast.makeText(this, "Empty email or password!", Toast.LENGTH_SHORT).show()
-        }
-        else if (!isValidEmail(email)) {
-            Toast.makeText(this, "Invalid email format!", Toast.LENGTH_SHORT).show()
-        }
-        else {
+        if (email.isNullOrEmpty() && password.isNullOrEmpty()) {
+            showToast("Empty email and password!")
+        } else if (email.isNullOrEmpty()) {
+            showToast("Empty email")
+        } else if (password.isNullOrEmpty()) {
+            showToast("Empty password")
+        } else if (!isValidEmail(email)) {
+            showToast("Invalid email format!")
+        } else {
             lifecycleScope.launch {
-                val user = userDao.getUserByEmailAndPassword(email, password)
-                if (user != null) {
-                    Log.d("USER", "fun loginUser: userId = ${user.userId}")
-                    saveUserInPref(user)
+                val userData = userDao.getUserByEmailAndPassword(email, password)
+                if (userData == null) {
+                    withContext(Dispatchers.Main) {
+                        showToast("User not found")
+                    }
+                } else if (email != userData.email) {
+                    showToast("Wrong email")
+                } else if (password != userData.password) {
+                    showToast("Wrong password")
+                } else {
+                    Log.d("USER", "fun loginUser: userId = ${userData.userId}")
+                    UserPrefs(this@LoginActivity).setUser(userData)
                     withContext(Dispatchers.Main) {
                         navigateToHomeActivity()
-                    }
-                } else {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(this@LoginActivity, "User not found", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -80,11 +86,15 @@ class LoginActivity : AppCompatActivity() {
 
     private fun saveUserInPref(newUser: UserEntity) {
         Log.d("USER", "fun saveUserInPref: userId= ${newUser.userId}")
-        UserPrefs(this@LoginActivity).setUser(newUser)
     }
 
     private fun navigateToHomeActivity() {
         startActivity(Intent(this, HomeActivity::class.java))
         finish()
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this@LoginActivity, message, Toast.LENGTH_SHORT).show()
+
     }
 }

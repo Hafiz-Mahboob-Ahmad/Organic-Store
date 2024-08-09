@@ -51,6 +51,9 @@ interface CartDao {
                 "WHERE userId = :userId AND productId = :productId"
     )
     suspend fun deleteCartProduct(userId: Int, productId: Int)
+
+    @Query("SELECT COUNT(*) = 0 FROM cart WHERE userId = :userId")
+    suspend fun isCartEmpty(userId: Int) : Boolean
 }
 
 

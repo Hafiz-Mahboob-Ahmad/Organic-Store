@@ -4,7 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="160dp"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
+    android:layout_marginStart="8dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginBottom="16dp"
     android:background="@drawable/rv_item_border"
     android:padding="15dp">
 
@@ -47,13 +50,13 @@
         android:id="@+id/tv_pack_offer_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5sp"
         android:fontFamily="@font/manrope"
         android:text="@string/_35"
         android:textSize="16sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/iv_increase_quantity"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_pack_ingredients" />
+        app:layout_constraintTop_toTopOf="@id/iv_increase_quantity" />
 
     <TextView
         android:id="@+id/tv_pack_regular_price"
@@ -61,17 +64,18 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
         android:fontFamily="@font/manrope_variable_font_wght"
-        android:text="@string/_50_32"
+        android:text="36"
         android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@id/iv_increase_quantity"
         app:layout_constraintStart_toEndOf="@id/tv_pack_offer_price"
-        app:layout_constraintTop_toTopOf="@id/tv_pack_offer_price" />
+        app:layout_constraintTop_toTopOf="@id/iv_increase_quantity" />
 
     <ImageView
-        android:id="@+id/iv_add"
+        android:id="@+id/iv_increase_quantity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:background="@drawable/ic_add"
-        android:layout_marginTop="2dp"
         android:contentDescription="@string/add_button_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -85,9 +89,28 @@
         android:fontFamily="@font/manrope_variable_font_wght"
         android:text="0"
         android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@id/tv_pack_offer_price"
-        app:layout_constraintEnd_toStartOf="@id/iv_add"
-        app:layout_constraintTop_toTopOf="@+id/tv_pack_offer_price" />
+        app:layout_constraintBottom_toBottomOf="@id/iv_increase_quantity"
+        app:layout_constraintEnd_toStartOf="@id/iv_increase_quantity"
+        app:layout_constraintTop_toTopOf="@+id/iv_increase_quantity" />
+
+    <ImageView
+        android:id="@+id/iv_decrease_quantity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:src="@drawable/ic_decrease_quantity"
+        app:layout_constraintBottom_toBottomOf="@id/iv_increase_quantity"
+        app:layout_constraintEnd_toStartOf="@id/tv_quantity"
+        app:layout_constraintTop_toTopOf="@id/iv_increase_quantity" />
+
+    <ImageView
+        android:id="@+id/iv_save"
+        android:layout_width="18dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="-10dp"
+        android:src="@drawable/ic_save"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

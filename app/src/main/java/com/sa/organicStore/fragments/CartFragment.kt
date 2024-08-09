@@ -66,6 +66,10 @@ class CartFragment : Fragment() {
                 productList.removeAt(position)
                 cardAdapter.notifyItemRemoved(position)
                 updateTotal()
+
+                if (productList.isEmpty()) {
+                    navigateToBackScreen()
+                }
             }
 
             override fun onIncreaseQuantity(position: Int) {
@@ -106,13 +110,11 @@ class CartFragment : Fragment() {
 
     private fun setupClickListeners() {
         binding.ivBackArrow.setOnClickListener {
-            requireActivity().onBackPressedDispatcher.onBackPressed()
+            navigateToBackScreen()
         }
         binding.btnApply.setOnClickListener {
-            Toast.makeText(requireContext(), "Apply clicked", Toast.LENGTH_SHORT).show()
         }
         binding.btnCheckOut.setOnClickListener {
-            Toast.makeText(requireContext(), "Checkout clicked", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -137,5 +139,9 @@ class CartFragment : Fragment() {
         binding.tvPrice.text = "$ $calculatedPrice"
         binding.tvDiscount.text = "$ $calculatedDiscount"
         binding.tvTotalPrice.text = "S $calculatedTotalPrice"
+    }
+
+    private fun navigateToBackScreen() {
+        requireActivity().onBackPressedDispatcher.onBackPressed()
     }
 }

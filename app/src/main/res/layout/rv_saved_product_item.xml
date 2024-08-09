@@ -65,4 +65,16 @@
         app:layout_constraintStart_toEndOf="@id/tv_pack_offer_price"
         app:layout_constraintTop_toTopOf="@id/tv_pack_offer_price" />
 
+    <ImageView
+        android:id="@+id/iv_remove_saved_product"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:layout_marginTop="4dp"
+        android:src="@drawable/ic_decrease_quantity"
+        app:layout_constraintTop_toBottomOf="@id/tv_pack_ingredients"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

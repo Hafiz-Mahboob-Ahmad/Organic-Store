@@ -52,17 +52,22 @@ class SaveFragment : Fragment() {
     private fun collectStateFlows() {
         lifecycleScope.launch {
             saveViewModel.fetchSavedProductsByUserId.collect {
-                setRecyclerView(it)
+                setRecyclerView(ArrayList(it))
             }
         }
     }
 
-    private fun setRecyclerView(productList: List<ProductEntity>) {
+    private fun setRecyclerView(productList: ArrayList<ProductEntity>) {
 
         savedAdapter = SavedAdapter(ArrayList(productList), object : SavedAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
                 val productId = productList[position].productId
                 navigateToBundleDetailsFragment(productId)
+            }
+
+            override fun onDeleteClick(position: Int) {
+                productList.removeAt(position)
+                savedAdapter.notifyItemRemoved(position)
             }
 
         })

@@ -15,12 +15,16 @@ class SavedAdapter(
 
     interface OnItemClickListener {
         fun onItemClick(position: Int)
+        fun onDeleteClick(position:Int )
     }
 
     inner class MyViewHolder(private val binding: RvSavedProductItemBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
             binding.root.setOnClickListener {
                 itemClickListener.onItemClick(adapterPosition)
+            }
+            binding.ivRemoveSavedProduct.setOnClickListener {
+                itemClickListener.onDeleteClick(adapterPosition)
             }
         }
 

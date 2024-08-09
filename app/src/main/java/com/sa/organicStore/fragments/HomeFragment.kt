@@ -1,5 +1,6 @@
 package com.sa.organicStore.fragments
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,28 +12,35 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.gson.Gson
 import com.sa.organicStore.adapter.HomeAdapter
+import com.sa.organicStore.database.entities.CartModel
 import com.sa.organicStore.database.entities.ProductEntity
 import com.sa.organicStore.database.entities.SaveProductModel
 import com.sa.organicStore.databinding.FragmentHomeBinding
 import com.sa.organicStore.utils.UserPrefs
+import com.sa.organicStore.viewmodel.CartViewModel
 import com.sa.organicStore.viewmodel.ProductViewModel
 import com.sa.organicStore.viewmodel.SaveViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlin.properties.Delegates
 
 class HomeFragment : Fragment() {
 
     private lateinit var binding: FragmentHomeBinding
     private lateinit var popularPackAdapter: HomeAdapter
     private lateinit var newItemAdapter: HomeAdapter
+    private var userId by Delegates.notNull<Int>()
     private val productViewModel: ProductViewModel by viewModels()
+    private val cartViewModel: CartViewModel by viewModels()
     private val saveViewModel: SaveViewModel by viewModels()
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
+        userId = UserPrefs(requireContext()).getUser()!!.userId
         return binding.root
     }
 
@@ -74,6 +82,16 @@ class HomeFragment : Fragment() {
                 val productId = productList[position].productId
                 navigateToBundleDetailsFragment(productId)
             }
+
+            override fun onIncreaseQuantity(position: Int) {
+                increaseQuantity(productList[position])
+                popularPackAdapter.notifyDataSetChanged()
+            }
+
+            override fun onDecreaseQuantity(position: Int) {
+                decreaseQuantity(productList[position])
+                popularPackAdapter.notifyDataSetChanged()
+            }
         })
         binding.rvPopularPack.adapter = popularPackAdapter
     }
@@ -89,9 +107,62 @@ class HomeFragment : Fragment() {
                 val product = productList[position].productId
                 navigateToBundleDetailsFragment(product)
             }
+
+            @SuppressLint("NotifyDataSetChanged")
+            override fun onIncreaseQuantity(position: Int) {
+                increaseQuantity(productList[position])
+                newItemAdapter.notifyDataSetChanged()
+            }
+
+            override fun onDecreaseQuantity(position: Int) {
+                decreaseQuantity(productList[position])
+                newItemAdapter.notifyDataSetChanged()
+            }
         })
         binding.rvOurNewItem.adapter = newItemAdapter
     }
+
+
+    private fun insertCartProduct(product: ProductEntity) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            val isCartProductExists: CartModel? =
+                cartViewModel.isCartProductExists(userId, product.productId)
+            if (isCartProductExists == null) {
+                val cartModel = CartModel(userId = userId, productId = product.productId, quantity = product.quantityCounter)
+                cartViewModel.insertCartProducts(cartModel)
+            } else {
+                cartViewModel.updateCartProduct(product.quantityCounter, userId, product.productId)
+            }
+        }
+    }
+
+
+    private fun increaseQuantity(product: ProductEntity) {
+        product.quantityCounter++
+        insertCartProduct(product)
+        //updateQuantityUI()
+    }
+
+    private fun decreaseQuantity(product: ProductEntity) {
+        if (product.quantityCounter > 0) {
+            product.quantityCounter--
+            if (product.quantityCounter > 0) {
+                insertCartProduct(product)
+            } else {
+                cartViewModel.deleteCartProduct(userId, product.productId)
+            }
+
+        }
+        //updateQuantityUI()
+    }
+
+
+//    private fun updateQuantityUI() {
+//        binding.tvQ.text = quantity.toString()
+//    }
+
+
+
 
     private fun setClickListeners() {
         binding.tvViewAllPopularPack.setOnClickListener {

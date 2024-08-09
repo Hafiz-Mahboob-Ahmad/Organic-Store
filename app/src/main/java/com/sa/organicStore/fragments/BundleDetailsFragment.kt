@@ -186,19 +186,28 @@ class BundleDetailsFragment : Fragment() {
 
     private fun setClickListeners() {
         binding.ivDecreaseQuantity.setOnClickListener {
-            decreaseCounter()
+            decreaseQuantity()
         }
         binding.ivIncreaseQuantity.setOnClickListener {
-            increaseCounter()
+            increaseQuantity()
         }
         binding.ivBackArrow.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
         binding.btnBuyNow.setOnClickListener {
-            navigateToCartFragment()
+            lifecycleScope.launch {
+                if (isCartEmpty()) {
+                    Toast.makeText(requireContext(), "Please add at least one product!", Toast.LENGTH_SHORT).show()
+                } else {
+                    navigateToCartFragment()
+                }
+            }
         }
     }
 
+    private suspend fun isCartEmpty() : Boolean {
+        return cartViewModel.isCartEmpty(userId)
+    }
 
     private fun insertCartProduct() {
         lifecycleScope.launch(Dispatchers.IO) {
@@ -214,13 +223,13 @@ class BundleDetailsFragment : Fragment() {
     }
 
 
-    private fun increaseCounter() {
+    private fun increaseQuantity() {
         quantity++
         insertCartProduct()
         updateQuantityUI()
     }
 
-    private fun decreaseCounter() {
+    private fun decreaseQuantity() {
         if (quantity > 0) {
             quantity--
             if (quantity > 0) {

@@ -37,7 +37,6 @@ class CartAdapter(
             binding.tvWeight.text = pack.weight.toString()
             binding.tvQuantityCounter.text = pack.quantityCounter.toString()
             binding.tvPrice.text = "$ ${pack.actualPrice}"
-            //val weight = pack.weight * pack.quantityCounter
             binding.tvWeight.text = pack.weight.toString()
             binding.tvWeightUnit.text = pack.weightUnit
         }

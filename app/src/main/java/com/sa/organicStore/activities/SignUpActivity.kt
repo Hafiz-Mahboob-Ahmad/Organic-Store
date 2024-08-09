@@ -42,9 +42,9 @@ class SignUpActivity : AppCompatActivity() {
             } else if (!isValidEmail(email)) {
                 Toast.makeText(this, "Invalid email format!", Toast.LENGTH_SHORT).show()
             }
-            else if (!isValidPassword(password)) {
-                Toast.makeText(this, "Password must be at least 8 characters long and include a number, an uppercase letter, and a special character!", Toast.LENGTH_LONG).show()
-            }
+//            else if (!isValidPassword(password)) {
+//                Toast.makeText(this, "Password must be at least 8 characters long and include a number, an uppercase letter, and a special character!", Toast.LENGTH_LONG).show()
+//            }
             else {
                 saveUserInDatabase(name, email, password)
             }

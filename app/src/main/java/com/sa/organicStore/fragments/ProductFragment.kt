@@ -47,7 +47,8 @@ class ProductFragment : Fragment() {
     private fun setupRecyclerView(productList: ArrayList<ProductEntity>) {
         productAdapter = ProductAdapter(productList, object : ProductAdapter.OnItemClickListener {
             override fun onSaveButtonClick(position: Int) {
-                Toast.makeText(requireContext(), "Not yet implemented", Toast.LENGTH_SHORT).show()
+              val product = productList[position].productId
+                navigateToBundleDetailsFragment(product)
             }
 
             override fun onImageClick(position: Int) {
