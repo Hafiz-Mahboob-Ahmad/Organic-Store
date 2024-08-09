@@ -42,9 +42,9 @@ class SignUpActivity : AppCompatActivity() {
             } else if (!isValidEmail(email)) {
                 Toast.makeText(this, "Invalid email format!", Toast.LENGTH_SHORT).show()
             }
-//            else if (!isValidPassword(password)) {
-//                Toast.makeText(this, "Password must be at least 8 characters long and include a number, an uppercase letter, and a special character!", Toast.LENGTH_LONG).show()
-//            }
+            else if (!isValidPassword(password)) {
+                Toast.makeText(this, "Password must be at least 8 characters long and include a number, an uppercase letter, and a special character!", Toast.LENGTH_LONG).show()
+            }
             else {
                 saveUserInDatabase(name, email, password)
             }
@@ -93,11 +93,6 @@ class SignUpActivity : AppCompatActivity() {
         return userDao.insertUser(newUser).toInt()
     }
 
-    //    private fun insertUser(newUser: UserEntity) {
-//        lifecycleScope.launch(Dispatchers.IO) {
-//            userDao.insertUser(newUser)
-//        }
-//    }
     private fun navigateToHomeActivity() {
         startActivity(Intent(this, HomeActivity::class.java))
         finish()

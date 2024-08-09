@@ -1,5 +1,6 @@
 package com.sa.organicStore.fragments
 
+import android.graphics.Paint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -45,11 +46,6 @@ class BundleDetailsFragment : Fragment() {
     private val productViewModel: ProductViewModel by viewModels()
     private val cartViewModel: CartViewModel by viewModels()
 
-    private lateinit var defaultProductDetails: ProductEntity
-    private var cartProductDetails: ProductEntity? = null
-    private var isCartProductExists: CartModel? = null
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -62,20 +58,7 @@ class BundleDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        lifecycleScope.launch(Dispatchers.IO) {
-//            isCartProductExists = cartViewModel.isCartProductExists(userId, productId)
-//            if (isCartProductExists == null){
-//                Log.d("CART","NULL isCartProductExists ")
-//            }
-//            else {
-//                Log.d("CART","NOT NULL isCartProductExists ")
-//            }
-//
-//        }
-
         setupArguments()
-        //fetchStateFlows()
-        //collectStateFlows()
         setProductDetails()
         setClickListeners()
     }
@@ -84,84 +67,6 @@ class BundleDetailsFragment : Fragment() {
         productId = args.productId
         Log.d("TAG", "fun setupArguments: productId = $productId")
     }
-
-//    private fun fetchStateFlows() {
-//        productViewModel.getDefaultProductDetails(productId)
-//        cartViewModel.getCartProductDetails(productId, userId)
-//        cartViewModel.isCartProductExists(userId, productId)
-//    }
-//
-//    private fun collectStateFlows() {
-//        lifecycleScope.launch(Dispatchers.IO) {
-//            productViewModel.defaultProductDetails
-//                .filter { it.productId != 0 } // Assuming productId != 0 indicates valid data
-//                .collect { product ->
-//                    Log.d(
-//                        "TAG", "fun collectStateFlows(): name = ${product.name} \n " +
-//                                "actualPrice = ${product.actualPrice} \n" +
-//                                "offerPrice = ${product.offerPrice} \n" +
-//                                "weight = ${product.weight} \n" +
-//                                "weightUnit = ${product.weightUnit} \n" +
-//                                "ingredients = ${product.ingredients} \n"
-//                    )
-//
-//                    defaultProductDetails = product
-//
-//                    Log.d(
-//                        "TAG", "defaultProductDetails: name = ${defaultProductDetails.name} \n " +
-//                                "actualPrice = ${defaultProductDetails.actualPrice} \n" +
-//                                "offerPrice = ${defaultProductDetails.offerPrice} \n" +
-//                                "weight = ${defaultProductDetails.weight} \n" +
-//                                "weightUnit = ${defaultProductDetails.weightUnit} \n" +
-//                                "ingredients = ${defaultProductDetails.ingredients} \n"
-//                    )
-//                }
-//        }
-//
-//        lifecycleScope.launch(Dispatchers.IO) {
-//            cartViewModel.cartProductDetails.collect {
-//                cartProductDetails = it
-//            }
-//        }
-//
-//        lifecycleScope.launch(Dispatchers.IO) {
-//            cartViewModel.isCartProductExists.collect {
-//                isCartProductExists = it
-//            }
-//        }
-//    }
-
-//    private fun setProductDetails() {
-//        val product = isCartProductExists?.let { cartProductDetails } ?: defaultProductDetails
-//
-//        product?.let {
-//            setPackViews(it)
-//        } ?: run {
-//            Log.e("BundleDetailsFragment", "Product details are not yet initialized")
-//        }
-//    }
-//
-//    private fun setProductDetails() {
-//
-//        if (isCartProductExists != null) {
-//            setPackViews(cartProductDetails)
-//        } else {
-//            setPackViews(defaultProductDetails)
-//        }
-//    }
-
-//    private fun insertProductIntoCart() {
-//        if (isCartProductExists == null) {
-//            Log.d("INSERT","fun insertProductIntoCart: isCartProductExists [null] = ${isCartProductExists}")
-//            cartViewModel.insertCartProducts(CartModel(userId = userId, productId = productId, quantity = quantity))
-//            Toast.makeText(requireContext(), "Added to cart.", Toast.LENGTH_SHORT).show()
-//        } else {
-//            cartViewModel.updateCartProduct(quantity, userId, productId)
-//            Log.d("INSERT","fun insertProductIntoCart: isCartProductExists [ !=null ] = ${isCartProductExists}")
-//            Toast.makeText(requireContext(), "Updated", Toast.LENGTH_SHORT).show()
-//        }
-//    }
-
 
     private fun setProductDetails() {
         lifecycleScope.launch(Dispatchers.IO) {
@@ -257,6 +162,7 @@ class BundleDetailsFragment : Fragment() {
         binding.tvProductWeight.text = itemData.weight.toString()
         binding.tvProductWeightUnit.text = itemData.weightUnit
         binding.tvRegularPrice.text = "$" + itemData.actualPrice.toString()
+        binding.tvRegularPrice.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
         binding.tvOfferPrice.text = "$" + itemData.offerPrice.toString()
         binding.tvProductDetailsDescription.text = itemData.description
         binding.tvQuantityCounter.text = itemData.quantityCounter.toString()

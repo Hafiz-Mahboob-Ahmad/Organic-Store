@@ -34,7 +34,6 @@ class HomeFragment : Fragment() {
     private val cartViewModel: CartViewModel by viewModels()
     private val saveViewModel: SaveViewModel by viewModels()
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -85,12 +84,13 @@ class HomeFragment : Fragment() {
 
             override fun onIncreaseQuantity(position: Int) {
                 increaseQuantity(productList[position])
-                popularPackAdapter.notifyDataSetChanged()
+                popularPackAdapter.notifyItemChanged(position)
             }
 
             override fun onDecreaseQuantity(position: Int) {
                 decreaseQuantity(productList[position])
-                popularPackAdapter.notifyDataSetChanged()
+                popularPackAdapter.notifyItemChanged(position)
+
             }
         })
         binding.rvPopularPack.adapter = popularPackAdapter
@@ -108,15 +108,14 @@ class HomeFragment : Fragment() {
                 navigateToBundleDetailsFragment(product)
             }
 
-            @SuppressLint("NotifyDataSetChanged")
             override fun onIncreaseQuantity(position: Int) {
                 increaseQuantity(productList[position])
-                newItemAdapter.notifyDataSetChanged()
+                newItemAdapter.notifyItemChanged(position)
             }
 
             override fun onDecreaseQuantity(position: Int) {
                 decreaseQuantity(productList[position])
-                newItemAdapter.notifyDataSetChanged()
+                newItemAdapter.notifyItemChanged(position)
             }
         })
         binding.rvOurNewItem.adapter = newItemAdapter
@@ -153,15 +152,7 @@ class HomeFragment : Fragment() {
             }
 
         }
-        //updateQuantityUI()
     }
-
-
-//    private fun updateQuantityUI() {
-//        binding.tvQ.text = quantity.toString()
-//    }
-
-
 
 
     private fun setClickListeners() {

@@ -56,5 +56,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/bnv_container" />
 
-
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -18,7 +18,6 @@ class UserPrefs(val context: Context) {
         {
             val userJson = Gson().toJson(user)
             putString("user", userJson)
-            //putString("user_email", user.email)
             apply()
         }
     }

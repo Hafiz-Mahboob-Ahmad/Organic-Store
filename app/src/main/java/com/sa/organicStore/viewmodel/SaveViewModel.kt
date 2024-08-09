@@ -26,7 +26,6 @@ class SaveViewModel(application: Application) : AndroidViewModel(application) {
             appDatabase.getSaveProductDao().insertSaveProduct(product)
         }
     }
-
     fun fetchSavedProductsByUserId(userId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             val products = appDatabase.getSaveProductDao().getSavedProductsByUserId(userId)

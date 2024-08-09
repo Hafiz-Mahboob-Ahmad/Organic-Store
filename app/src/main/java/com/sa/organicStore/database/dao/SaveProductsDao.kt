@@ -23,10 +23,3 @@ interface SaveProductsDao {
     )
     suspend fun getSavedProductsByUserId(userId: Int): List<ProductEntity>
 }
-
-//@Query(
-//    "SELECT * FROM product " +
-//            "JOIN save ON product.productId = save.productId " +
-//            "WHERE save.userId = :userId"
-//)
-//suspend fun getProductsByUserId(userId: Int): List<ProductEntity>

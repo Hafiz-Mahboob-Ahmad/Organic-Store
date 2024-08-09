@@ -65,10 +65,14 @@ class SaveFragment : Fragment() {
                 navigateToBundleDetailsFragment(productId)
             }
 
-            override fun onDeleteClick(position: Int) {
-                productList.removeAt(position)
-                savedAdapter.notifyItemRemoved(position)
-            }
+//            override fun onDeleteClick(position: Int) {
+//                productList.removeAt(position)
+//                savedAdapter.notifyItemRemoved(position)
+//
+//                if (productList.isEmpty()) {
+//                    navigateToBackScreen()
+//                }
+//            }
 
         })
         binding.rvSaveProductData.adapter = savedAdapter
@@ -77,5 +81,9 @@ class SaveFragment : Fragment() {
     private fun navigateToBundleDetailsFragment(productId: Int) {
         val action = SaveFragmentDirections.actionSaveFragmentToBundleDetailsFragment(productId = productId)
         findNavController().navigate(action)
+    }
+
+    private fun navigateToBackScreen() {
+        requireActivity().onBackPressedDispatcher.onBackPressed()
     }
 }

@@ -17,10 +17,6 @@ interface CartDao {
     @Query("SELECT * FROM cart WHERE userId = :userId AND productId = :productId")
     suspend fun isCartProductExists(userId: Int, productId: Int): CartModel?
 
-//    @Query("SELECT * FROM cart WHERE userId = :userId AND productId = :productId")
-//    suspend fun isCartProductExists(userId: Int, productId: Int): CartModel?
-
-
     @Query(
         "SELECT product.*, cart.quantity AS quantityCounter " +
                 "FROM product " +
@@ -55,10 +51,3 @@ interface CartDao {
     @Query("SELECT COUNT(*) = 0 FROM cart WHERE userId = :userId")
     suspend fun isCartEmpty(userId: Int) : Boolean
 }
-
-
-
-//    @Query(
-//        "SELECT * FROM product " +
-//                "JOIN cart ON  product.productId = cart.id")
-//    suspend fun getCartProducts() : List<CartModel>

@@ -1,5 +1,6 @@
 package com.sa.organicStore.fragments
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -46,6 +47,7 @@ class ProductFragment : Fragment() {
 
     private fun setupRecyclerView(productList: ArrayList<ProductEntity>) {
         productAdapter = ProductAdapter(productList, object : ProductAdapter.OnItemClickListener {
+            @SuppressLint("SuspiciousIndentation")
             override fun onSaveButtonClick(position: Int) {
               val product = productList[position].productId
                 navigateToBundleDetailsFragment(product)

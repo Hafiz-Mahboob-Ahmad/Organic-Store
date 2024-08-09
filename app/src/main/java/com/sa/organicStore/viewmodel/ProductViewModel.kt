@@ -28,29 +28,6 @@ class ProductViewModel(application: Application) : AndroidViewModel(application)
     private val _newProducts = MutableStateFlow<List<ProductEntity>>(emptyList())
     val newProducts: StateFlow<List<ProductEntity>> get() = _newProducts.asStateFlow()
 
-
-    val defaultProductEntity = ProductEntity(
-        productId = 0,             // Default value for productId
-        image = ArrayList(),       // Default empty list for image
-        name = "",                 // Default empty string for name
-        ingredients = "",          // Default empty string for ingredients
-        offerPrice = 0,            // Default value for offerPrice
-        actualPrice = 0,           // Default value for actualPrice
-        description = "",          // Default empty string for description
-        weight = 0,                // Default value for weight
-        weightUnit = "Kg",         // Default value for weightUnit
-        quantityCounter = 0,       // Default value for quantityCounter
-        category = "",             // Default empty string for category
-        userEmail = null           // Default null for userEmail
-    )
-
-
-    private val _defaultProductDetails = MutableStateFlow<ProductEntity>(defaultProductEntity)
-    val defaultProductDetails: StateFlow<ProductEntity> get() = _defaultProductDetails
-
-
-
-    // HomeFragment products
     fun fetchInitialProducts(userId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             val popularProductsList = appDatabase.getProductDao().getAllProducts(AppConstants.POPULAR_PRODUCTS, userId)
@@ -60,18 +37,7 @@ class ProductViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-
-    // Default product for BundleDetailsFragment
-//    fun getDefaultProductDetails(productId: Int) {
-//        viewModelScope.launch(Dispatchers.IO) {
-//            _defaultProductDetails.value = appDatabase.getProductDao().getDefaultProductDetails(productId)
-//        }
-//    }
-
     suspend fun getDefaultProductDetails(productId: Int) : ProductEntity {
         return appDatabase.getProductDao().getDefaultProductDetails(productId)
     }
-
-
-
 }

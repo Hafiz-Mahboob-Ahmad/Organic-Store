@@ -1,6 +1,8 @@
 package com.sa.organicStore.adapter
 
+import android.graphics.Paint
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.sa.organicStore.database.entities.ProductEntity
@@ -15,7 +17,7 @@ class SavedAdapter(
 
     interface OnItemClickListener {
         fun onItemClick(position: Int)
-        fun onDeleteClick(position:Int )
+//        fun onDeleteClick(position:Int )
     }
 
     inner class MyViewHolder(private val binding: RvSavedProductItemBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -23,9 +25,9 @@ class SavedAdapter(
             binding.root.setOnClickListener {
                 itemClickListener.onItemClick(adapterPosition)
             }
-            binding.ivRemoveSavedProduct.setOnClickListener {
-                itemClickListener.onDeleteClick(adapterPosition)
-            }
+//            binding.ivRemoveSavedProduct.setOnClickListener {
+//                itemClickListener.onDeleteClick(adapterPosition)
+//            }
         }
 
         fun bind(pack: ProductEntity) {
@@ -34,6 +36,8 @@ class SavedAdapter(
             binding.tvPackIngredients.text = pack.ingredients
             binding.tvPackOfferPrice.text = "$" + pack.offerPrice.toString()
             binding.tvPackRegularPrice.text = "$" + pack.actualPrice.toString()
+            binding.tvPackRegularPrice.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+            binding.ivRemoveSavedProduct.visibility = View.GONE
         }
     }
 

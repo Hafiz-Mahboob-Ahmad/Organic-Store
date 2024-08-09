@@ -33,9 +33,6 @@
             android:id="@+id/action_bundleDetailsFragment_to_cartFragment"
             app:destination="@+id/cart_fragment" />
 
-        <!--            app:popUpTo="@id/home_fragment"-->
-        <!--            app:popUpToInclusive="false" />-->
-
     </fragment>
 
 

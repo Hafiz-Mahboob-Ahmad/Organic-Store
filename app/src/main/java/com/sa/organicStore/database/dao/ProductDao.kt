@@ -14,7 +14,6 @@ interface ProductDao {
     @Query("SELECT * FROM product WHERE productId= :productId")
     suspend fun getDefaultProductDetails(productId: Int) : ProductEntity
 
-
     @Query(
         "SELECT product.*, cart.quantity AS quantityCounter " +
                 "FROM product " +
@@ -22,5 +21,4 @@ interface ProductDao {
                 "WHERE category = :category "
     )
     suspend fun getAllProducts(category: String, userId: Int): List<ProductEntity>
-
 }

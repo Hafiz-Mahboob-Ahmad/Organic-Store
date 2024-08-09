@@ -1,5 +1,6 @@
 package com.sa.organicStore.adapter
 
+import android.graphics.Paint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,6 +35,7 @@ class ProductAdapter(
             binding.tvPackIngredients.text = pack.ingredients
             binding.tvPackOfferPrice.text = "$" + pack.offerPrice.toString()
             binding.tvPackRegularPrice.text = "$" + pack.actualPrice.toString()
+            binding.tvPackRegularPrice.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
 
             if ( pack.quantityCounter == 0){
                 binding.tvQuantity.visibility = View.GONE

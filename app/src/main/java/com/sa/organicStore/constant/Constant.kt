@@ -117,9 +117,9 @@ object Constant {
             ),
             ProductEntity(
                 image = arrayListOf(
-                    R.drawable.sunflower_seeds,
-                    R.drawable.sunflower_seeds,
-                    R.drawable.sunflower_seeds
+                    R.drawable.sunflower_seeds1,
+                    R.drawable.sunflower_seeds1,
+                    R.drawable.sunflower_seeds1
                 ),
                 name = "Sunflower Seeds",
                 ingredients = "Pepper, Cumin",
