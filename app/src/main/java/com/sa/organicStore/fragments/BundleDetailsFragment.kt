@@ -166,17 +166,21 @@ class BundleDetailsFragment : Fragment() {
     private fun setProductDetails() {
         lifecycleScope.launch(Dispatchers.IO) {
             val isCartProductExists: CartModel? =
-                cartViewModel.isCartProductExists(userId = userId, productId = productId)
-            if (isCartProductExists == null) {
-                setPackViews(productViewModel.getDefaultProductDetails(productId))
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(requireContext(), "Default Product", Toast.LENGTH_SHORT).show()
-                }
+                cartViewModel.isCartProductExists(userId, productId)
+
+            val productEntity = if (isCartProductExists == null) {
+                productViewModel.getDefaultProductDetails(productId)
             } else {
-                setPackViews(cartViewModel.getCartProductDetails(productId, userId))
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(requireContext(), "Cart Product", Toast.LENGTH_SHORT).show()
-                }
+                cartViewModel.getCartProductDetails(productId, userId)
+            }
+
+            withContext(Dispatchers.Main) {
+                setPackViews(productEntity)
+                Toast.makeText(
+                    requireContext(),
+                    if (isCartProductExists == null) "Default Product" else "Cart Product",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
@@ -201,16 +205,11 @@ class BundleDetailsFragment : Fragment() {
 
 
     private fun insertProductIntoCart() {
-
         lifecycleScope.launch(Dispatchers.IO) {
-            val isCartProductExists: CartModel? =
-                cartViewModel.isCartProductExists(userId = userId, productId = productId)
+            val isCartProductExists = cartViewModel.isCartProductExists(userId, productId)
+
             if (isCartProductExists == null) {
-                val cartModel = CartModel(
-                    userId = userId,
-                    productId = productId,
-                    quantity = quantity
-                )
+                val cartModel = CartModel(userId = userId, productId = productId, quantity = quantity)
                 cartViewModel.insertCartProducts(cartModel)
                 withContext(Dispatchers.Main) {
                     Toast.makeText(requireContext(), "Added to cart.", Toast.LENGTH_SHORT).show()
@@ -222,7 +221,6 @@ class BundleDetailsFragment : Fragment() {
                 }
             }
         }
-
     }
 
 
