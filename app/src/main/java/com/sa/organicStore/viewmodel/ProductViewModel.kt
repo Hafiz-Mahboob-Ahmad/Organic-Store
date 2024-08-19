@@ -31,12 +31,25 @@ class ProductViewModel(application: Application) : AndroidViewModel(application)
     private val _newProducts = MutableStateFlow<List<ProductEntity>>(emptyList())
     val newProducts: StateFlow<List<ProductEntity>> get() = _newProducts.asStateFlow()
 
+
+    private val _allProducts = MutableStateFlow<List<ProductEntity>>(emptyList())
+    val allProducts: StateFlow<List<ProductEntity>> get() = _allProducts.asStateFlow()
+
     fun fetchInitialProducts(userId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             val popularProductsList = appDatabase.getProductDao().getAllProducts(AppConstants.POPULAR_PRODUCTS, userId)
             val newProductsList = appDatabase.getProductDao().getAllProducts(AppConstants.NEW_ITEM, userId)
             _popularProducts.value = popularProductsList
             _newProducts.value = newProductsList
+
+        }
+    }
+
+    fun fetchAllProducts(userId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val popularProductsList = appDatabase.getProductDao().getAllProducts(AppConstants.POPULAR_PRODUCTS, userId)
+            val newProductsList = appDatabase.getProductDao().getAllProducts(AppConstants.NEW_ITEM, userId)
+            _allProducts.value = popularProductsList + newProductsList
         }
     }
 

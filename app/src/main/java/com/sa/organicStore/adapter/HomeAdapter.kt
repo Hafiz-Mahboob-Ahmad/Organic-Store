@@ -9,7 +9,7 @@ import com.sa.organicStore.database.entities.ProductEntity
 import com.sa.organicStore.databinding.RvHorizontalBinding
 
 class HomeAdapter(
-    private val dataList: ArrayList<ProductEntity>,
+    private var dataList: ArrayList<ProductEntity>,
     private val itemClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<HomeAdapter.MyViewHolder>() {
 
@@ -70,5 +70,9 @@ class HomeAdapter(
 
     fun getItemAtPosition(position: Int): ProductEntity {
         return dataList[position]
+    }
+    fun updateData(products: MutableList<ProductEntity>) {
+        this.dataList = products as ArrayList<ProductEntity>
+        notifyDataSetChanged()
     }
 }

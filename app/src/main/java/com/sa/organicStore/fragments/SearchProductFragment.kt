@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -13,7 +14,7 @@ import com.sa.organicStore.adapter.HomeAdapter
 import com.sa.organicStore.database.entities.CartModel
 import com.sa.organicStore.database.entities.ProductEntity
 import com.sa.organicStore.database.entities.SaveProductModel
-import com.sa.organicStore.databinding.FragmentStoreBinding
+import com.sa.organicStore.databinding.FragmentSearchProductBinding
 import com.sa.organicStore.utils.UserPrefs
 import com.sa.organicStore.viewmodel.CartViewModel
 import com.sa.organicStore.viewmodel.ProductViewModel
@@ -22,9 +23,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.properties.Delegates
 
-class StoreFragment : Fragment() {
+class SearchProductFragment : Fragment() {
 
-    private lateinit var binding: FragmentStoreBinding
+    private lateinit var binding: FragmentSearchProductBinding
+
+    private var userId by Delegates.notNull<Int>()
 
     private val productViewModel: ProductViewModel by viewModels()
 
@@ -34,13 +37,11 @@ class StoreFragment : Fragment() {
 
     private lateinit var adapter: HomeAdapter
 
-    private var userId by Delegates.notNull<Int>()
+    private val productsList = mutableListOf<ProductEntity>()
+    private val filteredProducts = mutableListOf<ProductEntity>()
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentStoreBinding.inflate(inflater, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = FragmentSearchProductBinding.inflate(inflater, container, false)
         userId = UserPrefs(requireContext()).getUser()!!.userId
         init()
         return binding.root
@@ -50,11 +51,15 @@ class StoreFragment : Fragment() {
         fetchProductData()
         collectData()
         setClickListener()
+
     }
 
     private fun setClickListener() {
         binding.ivBackArrow.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+        binding.etSearchProducts.doAfterTextChanged { text ->
+            filterProducts(text.toString().trim())
         }
     }
 
@@ -66,7 +71,9 @@ class StoreFragment : Fragment() {
     private fun collectData() {
         lifecycleScope.launch {
             productViewModel.allProducts.collect { productList ->
-                setAdapter(productList)
+                productsList.clear()
+                productsList.addAll(productList)
+                setAdapter(productsList)
             }
         }
     }
@@ -123,7 +130,6 @@ class StoreFragment : Fragment() {
             } else {
                 cartViewModel.deleteCartProduct(userId, product.productId)
             }
-
         }
     }
 
@@ -134,10 +140,27 @@ class StoreFragment : Fragment() {
         Toast.makeText(requireContext(), "Saved", Toast.LENGTH_SHORT).show()
     }
 
-
     private fun navigateToBundleDetailsFragment(productId: Int) {
-        val action = StoreFragmentDirections.actionStoreFragmentToBundleDetailsFragment(productId = productId)
+        val action = SearchProductFragmentDirections.actionSearchFragmentToBundleDetailsFragment(productId = productId)
         findNavController().navigate(action)
+    }
+
+    private fun filterProducts(query: String) {
+        val lowerCaseQuery = query.lowercase()
+
+        filteredProducts.clear()
+        if (lowerCaseQuery.isEmpty()) {
+            filteredProducts.addAll(productsList)
+        } else {
+            productsList.forEach { product ->
+                val name = product.name.lowercase()
+
+                if (name.contains(lowerCaseQuery)) {
+                    filteredProducts.add(product)
+                }
+            }
+        }
+        adapter.updateData(filteredProducts)
     }
 
 }

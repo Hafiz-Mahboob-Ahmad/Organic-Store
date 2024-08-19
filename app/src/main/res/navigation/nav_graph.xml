@@ -18,6 +18,9 @@
         <action
             android:id="@+id/action_homeFragment_to_bundleDetailsFragment"
             app:destination="@+id/bundle_details_fragment" />
+        <action
+            android:id="@+id/action_home_fragment_to_search_fragment"
+            app:destination="@id/search_fragment" />
     </fragment>
 
 
@@ -42,6 +45,9 @@
         android:label="Store"
         tools:layout="@layout/fragment_store">
 
+        <action
+            android:id="@+id/action_store_fragment_to_bundle_details_fragment"
+            app:destination="@id/bundle_details_fragment" />
     </fragment>
 
     <fragment
@@ -92,6 +98,16 @@
         tools:layout="@layout/fragment_cart">
 
     </fragment>
+    <fragment
+        android:id="@+id/search_fragment"
+        android:name="com.sa.organicStore.fragments.SearchProductFragment"
+        android:label="fragment_search"
+        tools:layout="@layout/fragment_search_product">
+        <action
+            android:id="@+id/action_search_fragment_to_bundle_details_fragment"
+            app:destination="@id/bundle_details_fragment" />
+    </fragment>
+
 
 
 </navigation>

@@ -170,6 +170,9 @@ class HomeFragment : Fragment() {
         binding.tvViewAllOurNewItem.setOnClickListener {
             navigateToProductFragment( "New Item")
         }
+        binding.ivIcSearch.setOnClickListener {
+            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSearchFragment())
+        }
     }
 
     private fun navigateToProductFragment(title: String) {

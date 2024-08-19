@@ -38,7 +38,8 @@ class HomeActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.product_fragment ||
                 destination.id == R.id.bundle_details_fragment ||
-                destination.id == R.id.cart_fragment
+                destination.id == R.id.cart_fragment ||
+                destination.id == R.id.search_fragment
             ) {
                 binding.bnvContainer.visibility = View.GONE
                 binding.fabStore.visibility = View.GONE
